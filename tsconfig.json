@@ -2,6 +2,14 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "paths": {
+      "@dangular-common/*": [
+        "src/app/libraries/dangular_common/src/lib/*"
+      ],
+      "@dangular-data/*": [
+        "src/app/libraries/dangular_data/*"
+      ]
+    },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
