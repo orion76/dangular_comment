@@ -7,9 +7,19 @@
     },
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug",
+    "logLevel": "info",
     "headers": {
       "Cookie": "SESSb2aa3b7f7728a67a39ae75d790b3105d=9Y6p_lPnsSAiU7tSeWsK9taKcPJiiQuLOt7s2pNtrMw; expires=Tue, 31-Mar-2020 11:48:52 GMT; Max-Age=2000000; path=/; domain=.sdd.ti-work.ru; HttpOnly"
     }
+  },
+  "/sites": {
+    "target": {
+      "host": "sdd.ti-work.ru",
+      "protocol": "http:",
+      "port": 80
+    },
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
   }
 }

@@ -36,6 +36,6 @@ export namespace EntitiesSelect {
     Entities,
     CommentTreeSelect.Children,
     (entities: Dictionary<IEntity>, ids: string[]): IEntity[] => {
-      return ids.map((id) => entities[id]);
+      return ids ? ids.map((id) => entities[id]) : [];
     });
 }

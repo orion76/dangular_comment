@@ -1,44 +1,27 @@
-import {InjectionToken, ViewContainerRef} from '@angular/core';
+import {InjectionToken} from '@angular/core';
 import {IEntityComment} from '../comment/types';
 import {Observable} from 'rxjs';
-import {IEditorContent} from './editor.service';
 import {IEntityBase} from '@dangular-common/entity/types';
+import {TFormMode} from './comment-form.service';
 
 
-export const EDITOR_SERVICE = new InjectionToken<IEditorService>('EDITOR_SERVICE');
+export const COMMENT_FORM_SERVICE = new InjectionToken<ICommentFormService>('COMMENT_FORM_SERVICE');
 export const COMMENT_SERVICE = new InjectionToken<ICommentService>('COMMENT_SERVICE');
 
-export interface IEditorFormService {
-  readonly id: string;
+export interface ICommentFormService {
 
-  onOpen(): Observable<IEditorContent>;
+  setDefault(id: string, mode: TFormMode);
 
-  save(content: IEditorContent);
-}
+  openCreate(id: string);
 
-export interface IFormPlaceService {
-  addForm(container: ViewContainerRef);
+  openEdit(id: string);
 
-  moveForm(prev_container: ViewContainerRef, curr_container: ViewContainerRef);
-}
+  openDefault();
 
-export interface IEditorService {
+  onOpenCreate(id): Observable<boolean>;
 
-  onEdit(): Observable<string>;
+  onOpenEdit(id): Observable<boolean>;
 
-  save(content: string);
-
-  cancel();
-
-  focus(focus: boolean);
-
-  onSave(): Observable<string>;
-
-  onFocus(): Observable<boolean>;
-
-  onCancel(): Observable<boolean>;
-
-  edit(content: string);
 }
 
 export interface ICommentService {
@@ -46,7 +29,8 @@ export interface ICommentService {
 
   saveNew(parentId: string, content: string);
 
-  getSiblings(parentId: string): Observable<IEntityComment[]>;
+  getChildren(parentId: string): Observable<IEntityComment[]>;
+
   //-----------
 
   saveUpdate(commentId: string, content: string);

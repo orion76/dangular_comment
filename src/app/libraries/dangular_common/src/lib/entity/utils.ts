@@ -1,5 +1,6 @@
 import {IEntity, IEntityConfig} from './types';
 import {IJsonApiEntity, IJsonApiResponse} from '@dangular-common/types/jsonapi-response';
+import {ETypes} from '../../../../../web-components/configs/entities/types';
 
 export function entityUUID(entity: IEntity) {
   return `${entity.type}--${entity.id}`;

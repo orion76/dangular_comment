@@ -1,8 +1,7 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {COMMENT_SERVICE, ICommentService} from '../services/types';
-import {IAppState} from '../state/IAppState';
+import {AppState} from '../state/app.state';
 import {Store} from '@ngrx/store';
-import {UFormMode} from './types';
 
 
 export interface IButton {
@@ -20,28 +19,28 @@ export interface IButton {
                   [modules]="modules"
                   (onFocus)="onFocus($event)"
                   (onBlur)="onBlur($event)"
-
+                  [disabled]="isDisabled"
+                  class="comment-form__editor"
     ></quill-editor>
-    <div class="comment-form-action">
-      <input type="submit" (click)="Save()" [disabled]="false" [hidden]="false" value="Save">
-      <input type="submit" (click)="actionCancel()" [disabled]="false" [hidden]="false" value="Cancel">
+    <div class="comment-form__actions comment-form-actions">
+      <input type="submit" (click)="Save()" [disabled]="isDisabled" [hidden]="false" value="Save" class="comment-form-actions__button">
+      <input type="submit" (click)="Cancel()" [disabled]="isDisabled" [hidden]="false" value="Cancel" class="comment-form-actions__button">
     </div>
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentFormComponent implements OnInit {
-  @Input() mode: UFormMode = 'create';
-  @Input() commentId: string;
-  @Input() parentId: string;
   @Input() content: string;
-
+  @Output() onSave = new EventEmitter<string>();
+  @Output() onCancel = new EventEmitter<string>();
+  @Input() isDisabled: boolean;
   modules = {
     toolbar: [['bold', 'italic'], ['link', 'image']]
   };
 
   constructor(@Inject(COMMENT_SERVICE) private service: ICommentService,
-              private store: Store<IAppState>,
+              private store: Store<AppState>,
               private cdr: ChangeDetectorRef
   ) {
   }
@@ -54,24 +53,16 @@ export class CommentFormComponent implements OnInit {
   }
 
   Save() {
-    switch (this.mode) {
-      case 'create':
-        this.service.saveNew(this.parentId, this.content);
-        break;
+    this.onSave.emit(this.content);
 
-      case 'edit':
-        this.service.saveUpdate(this.commentId, this.content);
-        break;
-    }
   }
 
-  actionCancel() {
-    this.content = '';
+  Cancel() {
+    this.onCancel.emit(this.content);
   }
 
   ngOnInit() {
-    this.content = '';
-    this.cdr.detectChanges();
+
   }
 
 }

@@ -6,8 +6,8 @@ import {CommentContentComponent} from './components/comment-content.component';
 import {CommentListComponent} from './comment-list.component';
 import {CommentComponent} from './comment.component';
 import {CommentFormComponent} from './comment-form.component';
-import {COMMENT_SERVICE, EDITOR_SERVICE} from '../services/types';
-import {EditorService} from '../services/editor.service';
+import {COMMENT_SERVICE, COMMENT_FORM_SERVICE} from '../services/types';
+import {CommentFormService} from '../services/comment-form.service';
 import {QuillModule} from 'ngx-quill';
 import {CommentService} from '../services/comment.service';
 import {CommentActionsComponent} from './components/comment-actions.component';
@@ -35,7 +35,7 @@ import {CommentViewComponent} from './comment-view.component';
   ],
   providers: [
     {provide: COMMENT_SERVICE, useClass: CommentService},
-    {provide: EDITOR_SERVICE, useClass: EditorService},
+    {provide: COMMENT_FORM_SERVICE, useClass: CommentFormService},
   ],
 })
 export class CommentModule {

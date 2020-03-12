@@ -1,5 +1,5 @@
 import {IEntity, IEntityConfig, IEntityRelationshipConfig} from './types';
-import {createFromResponse, getIn, hasIn, selectValue, setIn} from '@dangular-common/entity/utils';
+import {createFromResponse, getIn, selectValue, setIn} from '@dangular-common/entity/utils';
 import {IJsonApiEntity, IJsonApiRelationship, IJsonApiRelationshipData, IJsonApiResponse} from '@dangular-common/types/jsonapi-response';
 import {mergeAttributes, mergeRelationships} from '@dangular-common/entity/entity-to-jsonapi';
 
@@ -53,15 +53,6 @@ export class Entity implements IEntity {
     // });
   }
 
-  getIncludedRelationships(relationships: Record<string, IEntityRelationshipConfig>) {
-    const included: Record<string, IEntityRelationshipConfig> = {};
-    return Object.keys(relationships).reduce((acc, key: string) => {
-      if (relationships[key].included) {
-        acc[key] = relationships[key];
-      }
-      return acc;
-    }, {});
-  }
 
   relationshipDataToArray(data: IJsonApiRelationshipData): IJsonApiRelationship[] {
     return Object.keys(data).reduce((items: IJsonApiRelationship[], fieldName: string) => {
@@ -111,7 +102,7 @@ export class Entity implements IEntity {
         break;
       case 'relationships':
         const {id, type} = value;
-        setIn(this, ['input', 'relationships', field], {id, type});
+        setIn(this, ['input', 'relationships', field, 'data'], {id, type});
         if (value instanceof Entity) {
           setIn(this, ['entities', field], value);
         }
@@ -149,6 +140,12 @@ export class Entity implements IEntity {
     return getIn(['input', 'attributes', name], this) || getIn(['data', 'attributes', name], this);
   }
 
+  selectRelationship(name: string) {
+    const value = getIn(['input', 'relationships', name], this) || getIn(['data', 'relationships', name], this);
+
+    return value;
+  }
+
   toJsonApi(): IJsonApiResponse {
     const {id, type} = this;
     const data: IJsonApiResponse = {
@@ -161,6 +158,10 @@ export class Entity implements IEntity {
     };
 
     return data;
+  }
+
+  findIncluded(id: string) {
+    return this.includes ? this.includes.find((item) => item.id === id) : null;
   }
 
   protected initProperties(config: IEntityConfig) {
@@ -177,20 +178,23 @@ export class Entity implements IEntity {
   }
 
   protected createEntity(relationship: IJsonApiRelationship): IEntity {
-    const data = this.includes.find((item) => item.id === relationship.id);
+    const {id, type} = relationship;
+    const data = this.findIncluded(id) || {id, type};
+
     const response: IJsonApiResponse = {
       included: this.includes,
       data: [data]
     };
-    return createFromResponse(Entity, this.configs, response)[0];
+    const entity=createFromResponse(Entity, this.configs, response)[0];
+    return entity;
   }
 
-  protected getEntity(relationship: IJsonApiRelationship) {
-    if (!this.entities || !this.entities[relationship.id]) {
+  protected getEntity(field: string, relationship: IJsonApiRelationship) {
+    if (!this.entities || !this.entities[field]) {
       this.entities = this.entities || {};
-      this.entities[relationship.id] = this.createEntity(relationship);
+      setIn(this, ['entities', field], this.createEntity(relationship));
     }
-    return this.entities[relationship.id];
+    return getIn(['entities', field], this);
   }
 
   protected isFieldExist(field: string) {
@@ -201,11 +205,7 @@ export class Entity implements IEntity {
 
   protected isFieldValueExist(field: string) {
     const section = this.getFieldSection(field);
-
-    if(field==='uid'){
-      debugger;
-    }
-    return !!(hasIn(['input', section, field], this) || hasIn(['data', section, field], this));
+    return !!selectValue([section, field], this.input, this.data);
   }
 
   protected getRelationship(field: string) {
@@ -216,17 +216,18 @@ export class Entity implements IEntity {
     if (!this.isFieldValueExist(field)) {
       return null;
     }
+    // if (field === 'user_picture') {
+    //   debugger;
+    // }
+    // if (field === 'uid') {
+    //   debugger;
+    // }
+    const value = selectValue(['relationships', field], this.input, this.data);
 
     if (this.configSelf.relationships[field].included) {
-      if (Array.isArray(this.data.relationships[field].data)) {
-        const list: IJsonApiRelationship[] = this.data.relationships[field].data as IJsonApiRelationship[];
-        return list.map((data) => this.getEntity(data));
-      } else {
-        const item: IJsonApiRelationship = this.data.relationships[field].data as IJsonApiRelationship;
-        return this.getEntity(item);
-      }
-    } else {
-      return selectValue(['relationships', field], this.input, this.data);
+      return Array.isArray(value.data) ? value.data.map((data) => this.getEntity(field, data)) : this.getEntity(field, value.data);
     }
+
+    return value;
   }
 }

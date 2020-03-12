@@ -10,16 +10,6 @@ export namespace CommentTreeSelect {
   export const Nodes = createSelector(State, selectEntities);
   export const Node = createSelector(Nodes, (nodes, props: { id: string }) => nodes[props.id]);
   export const Children = createSelector(Node, (node) => {
-
-    if(!node){
-      debugger;
-    }
-
-
-    if(!node.children){
-      debugger;
-    }
-
-    return node ? Array.from(node.children.values()) : null;
+    return (node && node.children) ? Array.from(node.children.values()) : null;
   });
 }

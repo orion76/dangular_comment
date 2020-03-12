@@ -1,8 +1,8 @@
-import {IEntity, IEntityAttributeConfig, IEntityConfig} from '@dangular-common/entity/types';
+import {IEntity, IEntityConfig} from '@dangular-common/entity/types';
 import {InjectionToken} from '@angular/core';
 import {Observable} from 'rxjs';
-import {ETypes} from '../../configs/entities/types';
-import {IEntityFile} from '../../types';
+import {IEntityFile} from '../../configs/entities/items/file--file';
+
 
 export const USER_SERVICE = new InjectionToken<IUserService>('USER_SERVICE');
 
@@ -11,7 +11,7 @@ export interface IUserService {
 
   setUser(user: IEntityUser);
 
-  getUser(): Observable<IEntityUser>;
+  loggedUser(): Observable<IEntityUser>;
 }
 
 export interface IEntityUser extends IEntity {

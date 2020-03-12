@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {IEntityConfig} from '../dangular_common/src/lib/entity/types';
 import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
-import {IAppState} from '../../web-components/state/IAppState';
+import {AppState} from '../../web-components/state/app.state';
 import {ENTITY_CONFIGS, IEntityConfigService} from '@dangular-data/types';
 import {ConfigEntitySelect} from '../../web-components/state/configs/entity/selector';
 import {filter, take} from 'rxjs/operators';
@@ -15,7 +15,7 @@ import {ConfigEntityAction} from '../../web-components/state/configs/entity/acti
 export class EntityConfigService implements IEntityConfigService {
 
   constructor(@Inject(ENTITY_CONFIGS) protected configs: IEntityConfig[],
-              protected store: Store<IAppState>) {
+              protected store: Store<AppState>) {
     this.addMany(configs);
   }
 

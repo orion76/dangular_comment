@@ -2,9 +2,9 @@ import {Inject, Injectable} from '@angular/core';
 
 
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {COMMENT_SERVICE, EDITOR_SERVICE, ICommentService, IEditorService} from '../../services/types';
+import {COMMENT_SERVICE, COMMENT_FORM_SERVICE, ICommentService, ICommentFormService} from '../../services/types';
 import {Store} from '@ngrx/store';
-import {IAppState} from '../IAppState';
+import {AppState} from '../app.state';
 import {map, switchMap} from 'rxjs/operators';
 import {IEntityComment} from '../../comment/types';
 import {EntitiesAction} from './actions';
@@ -24,9 +24,8 @@ export class EntitiesEffects {
 
   constructor(
     private actions$: Actions,
-    private store: Store<IAppState>,
+    private store: Store<AppState>,
     @Inject(COMMENT_SERVICE) private service: ICommentService,
-    @Inject(EDITOR_SERVICE) private editor: IEditorService,
   ) {
   }
 

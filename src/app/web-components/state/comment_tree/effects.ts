@@ -2,9 +2,9 @@ import {Inject, Injectable} from '@angular/core';
 
 
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {COMMENT_SERVICE, EDITOR_SERVICE, ICommentService, IEditorService} from '../../services/types';
+import {COMMENT_SERVICE, COMMENT_FORM_SERVICE, ICommentService, ICommentFormService} from '../../services/types';
 import {select, Store} from '@ngrx/store';
-import {IAppState} from '../IAppState';
+import {AppState} from '../app.state';
 import {EntitiesAction} from '../entities/actions';
 import {map, switchMap} from 'rxjs/operators';
 import {ICommentNode} from './reducer';
@@ -28,7 +28,7 @@ function getNodes(comments: IEntityComment[]): Record<string, ICommentNode> {
   return comments.reduce((acc: Record<string, ICommentNode>, comment) => addChild(acc, comment), {});
 }
 
-function addParents(store: Store<IAppState>, nodes: Record<string, ICommentNode>) {
+function addParents(store: Store<AppState>, nodes: Record<string, ICommentNode>) {
   const ids = Object.keys(nodes);
   if (ids.length > 0) {
     return store.pipe(
@@ -79,9 +79,8 @@ export class CommentTreeEffects {
 
   constructor(
     private actions$: Actions,
-    private store: Store<IAppState>,
+    private store: Store<AppState>,
     @Inject(COMMENT_SERVICE) private service: ICommentService,
-    @Inject(EDITOR_SERVICE) private editor: IEditorService,
   ) {
   }
 }

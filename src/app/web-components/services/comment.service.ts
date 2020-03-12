@@ -2,21 +2,18 @@ import {Inject, Injectable} from '@angular/core';
 import {ICommentService} from './types';
 import {DATA_SERVICE, IDataService} from '@dangular-data/types';
 import {IEntityComment} from '../comment/types';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {IEntity, IEntityBase} from '@dangular-common/entity/types';
 import {select, Store} from '@ngrx/store';
-import {IAppState} from '../state/IAppState';
-
-import {CommentTreeSelect} from '../state/comment_tree/selector';
+import {AppState} from '../state/app.state';
 
 import {EConditionOperator} from '@dangular-data/request/jsonapi-request';
-import {catchError, filter, map, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
+import {filter, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 import {EntitiesAction} from '../state/entities/actions';
 import {EntitiesSelect} from '../state/entities/selector';
 import {ETypes} from '../configs/entities/types';
-import {IEntityUser} from './user/types';
-import {LoggedUsersSelect} from '../state/logged_user/selector';
-import {IFilter, IFilters} from '@dangular-data/request/request.service';
+import {IUserService, USER_SERVICE} from './user/types';
+import {IFilters} from '@dangular-data/request/request.service';
 
 export interface IComment {
   comment: IEntityComment;
@@ -27,18 +24,12 @@ export interface IComment {
 export class CommentService implements ICommentService {
 
 
-  entities$ = this.store.pipe(select(EntitiesSelect.Entities));
-  nodes$ = this.store.pipe(select(CommentTreeSelect.Nodes));
-
   constructor(
     @Inject(DATA_SERVICE) private data: IDataService,
-    private store: Store<IAppState>
+    @Inject(USER_SERVICE) private user: IUserService,
+    private store: Store<AppState>
   ) {
 
-  }
-
-  loggedUser(): Observable<IEntityUser> {
-    return this.store.pipe(select(LoggedUsersSelect.User), filter(Boolean));
   }
 
   entityOwner(): Observable<IEntity> {
@@ -50,7 +41,7 @@ export class CommentService implements ICommentService {
   }
 
   createFilters(parent_id: string): IFilters {
-    return{
+    return {
       filters: [{field: ['pid', 'id'], value: parent_id}]
     };
   }
@@ -93,18 +84,18 @@ export class CommentService implements ICommentService {
   //   );
   // }
 
-  saveUpdate(commentId: string, content: string) {
-    this.store
-      .pipe(select(EntitiesSelect.Comment, {id: commentId}))
-      .subscribe((comment) => this.data.update(comment));
+  saveUpdate(commentId: string, content: string): Observable<IEntityComment> {
+    return this.store
+      .pipe(
+        select(EntitiesSelect.Comment, {id: commentId}),
+        switchMap((comment) => this.data.update(comment))
+      );
   }
 
-  getSiblings(parentId: string): Observable<IEntityComment[]> {
+  getChildren(parentId: string): Observable<IEntityComment[]> {
     return this.store.pipe(
       select(EntitiesSelect.CommentChildren, {id: parentId}),
-      // tap((data) => console.log('2222', data)),
       filter((children: IEntityComment[]) => children.length > 0),
-      tap((data) => console.log('3333', data))
     );
   }
 
@@ -118,25 +109,17 @@ export class CommentService implements ICommentService {
 //    this.listChange.emit(parent.comment.id);
   }
 
-  saveNew(parentId: string, body: string) {
-    this.loggedUser()
+  saveNew(parentId: string, body: string): Observable<IEntityComment> {
+    return this.user.loggedUser()
       .pipe(
         withLatestFrom(this.entityOwner(), (uid, entity) => {
-
-          return {
-            parentId,
-            uid,
-            entity_type: entity.type,
-            entity_id: entity.id,
-            body
-          };
+          return {parentId, uid, entity_type: entity.type, entity_id: entity.id, body};
         }),
         switchMap((data: Partial<IEntityComment>) => this.data.createWithValues<IEntityComment>(ETypes.COMMENT, data)),
         switchMap((comment: IEntityComment) => this.data.add<IEntityComment>(comment)),
+        tap((comment: IEntityComment) => this.store.dispatch(new EntitiesAction.AddComments([comment]))),
         take(1)
-      )
-      .toPromise()
-      .then((comment: IEntityComment) => this.store.dispatch(new EntitiesAction.AddComments([comment])));
+      );
   }
 
 }

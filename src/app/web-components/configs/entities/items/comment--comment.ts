@@ -9,8 +9,8 @@ export const configRequest: IRequestConfig = {
     default: {
       url: 'jsonapi/comment/comment',
       types: {
-        one: {include: ['uid']},
-        list: {include: ['uid']},
+        one: {include: ['uid','uid.user_picture']},
+        list: {include: ['uid','uid.user_picture']},
         add: {},
         update: {},
         delete: {}

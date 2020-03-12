@@ -17,7 +17,7 @@ import {ConfigEntityEffects} from './configs/entity/effects';
 import {LoggedUsersEffects} from './logged_user/effects';
 
 
-export interface IAppState {
+export interface AppState {
   entities: IEntitiesState;
   commentTree: ICommentTreeState;
   configRequest: IConfigRequestState;
@@ -33,7 +33,7 @@ export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
       console.error('[action]', action.type, {action, state},e);
     }
 
-    console.log('[action]', action.type, {action, state});
+    // console.log('[action]', action.type, {action, state});
     return state;
   };
 }
