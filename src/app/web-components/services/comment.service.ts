@@ -61,13 +61,11 @@ export class CommentService implements ICommentService {
       });
   }
 
-  loadChildren(parent_id: string) {
-    return this.data.list('comment', this.createFilters(parent_id));
+  loadChildren(parent_id: string): Observable<IEntityComment[]> {
+    return this.data.list(ETypes.COMMENT, this.createFilters(parent_id));
   }
 
   setEntity(entity: IEntityBase) {
-    console.log('[debug] setEntity', entity);
-
     this.data.createWithValues(entity.type, entity)
       .pipe(
         take(1))

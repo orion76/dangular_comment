@@ -33,7 +33,7 @@ export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
       console.error('[action]', action.type, {action, state},e);
     }
 
-    // console.log('[action]', action.type, {action, state});
+    console.log('[action]', action.type, {action, state});
     return state;
   };
 }

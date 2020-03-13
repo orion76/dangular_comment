@@ -65,7 +65,7 @@ export class DataService implements IDataService {
   }
 
   list<T extends IEntity>(entity_type: string, params: IQueryParams): Observable<T[]> {
-    return this.requestFactory.create('update', entity_type, params).pipe(
+    return this.requestFactory.create('list', entity_type, params).pipe(
       switchMap((request) => this.request<T>(request)),
     );
   }

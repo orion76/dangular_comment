@@ -1,30 +1,44 @@
 @import "./assets/quill";
 
-.comment {
+.comments-container {
   display: block;
-  padding-left: 1em;
+  max-width: 40em;
 }
 
-
-.comment-form-root {
+.comment-content {
+  width: 100%;
   display: flex;
+}
 
-  .comment-form-root__author {
+.comment-editor {
+  width: 100%;
+}
 
-  }
+.comment__content-block {
+  display: flex
+}
 
-  .comment-form-root__form {
+.comment__actions {
+  text-align: right;
+}
 
-  }
+.comment-root {
+  display: flex;
+}
+
+.comment {
+  padding-left: 1em;
+  display:block;
 }
 
 .comment-form {
-  width: 40em;
-  display: block
+  width: 100%;
+  display: flex
 }
 
 .comment-form__editor {
   display: block;
+  width: 100%;
 }
 
 .comment-form-actions {
@@ -42,5 +56,15 @@
 
   .comment-author__avatar {
     width: 4em;
+  }
+}
+
+.comment__content-block {
+  display: flex
+}
+
+.comment-actions {
+  .comment-actions__button {
+    margin-left: 1.6em;
   }
 }

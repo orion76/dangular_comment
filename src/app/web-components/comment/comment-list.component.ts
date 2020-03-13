@@ -8,16 +8,30 @@ import {tap} from 'rxjs/operators';
 @Component({
   selector: 'comment-list',
   template: `
-    <div class="comment-form-root" *ngIf="isRoot; else child">
+    <!-- FOR ROOT  -->
+    <div class="comment-form" *ngIf="isRoot; else child">
       <comment-author *ngIf="loggedUser$ | async as user" [user]="user"
-                      class="comment-author comment-form-root__author">
+                      class="comment-author comment-form__author">
       </comment-author>
-      <comment-form [isDisabled]="!(openForm$ | async)" (onSave)="onSave($event)" (onCancel)="onCancel($event)"
-                    class="comment-form comment-form-root__form"
-      ></comment-form>
+
+      <!-- can Disable -->
+      <comment-editor [isDisabled]="!(openForm$ | async)" (onSave)="onSave($event)" (onCancel)="onCancel($event)"
+                      [content]="commentContent"
+                      class="comment-editor comment-form__editor"
+      ></comment-editor>
     </div>
+
     <ng-template #child>
-      <comment-form *ngIf="openForm$ | async" (onSave)="onSave($event)" (onCancel)="onCancel($event)"></comment-form>
+      <!-- FOR CHILD-->
+      <div *ngIf="openForm$ | async" class="comment-form">
+        <comment-author *ngIf="loggedUser$ | async as user" [user]="user"
+                        class="comment-author comment-form__author">
+        </comment-author>
+        <!-- can Hide -->
+        <comment-editor  (onSave)="onSave($event)" (onCancel)="onCancel($event)"
+                        class="comment-editor comment-form__editor"
+        ></comment-editor>
+      </div>
     </ng-template>
 
     <comment *ngFor="let comment of items$|async; trackBy:trackByCommentId " [comment]="comment" class="comment"></comment>
@@ -29,7 +43,7 @@ export class CommentListComponent implements OnInit {
   openForm$: Observable<boolean>;
   @Input() entity_type: string;
   @Input() entity_id: string;
-
+  commentContent: string;
   @Input() parentId: string;
 
   isRoot = false;
@@ -46,10 +60,12 @@ export class CommentListComponent implements OnInit {
     this.service.saveNew(this.parentId, content)
       .toPromise().then(() => {
       this.form.openDefault();
+      this.commentContent = '';
     });
   }
 
   onCancel(content: string) {
+    this.commentContent = '';
     this.form.openDefault();
   }
 
@@ -70,12 +86,7 @@ export class CommentListComponent implements OnInit {
     this.items$ = this.service.getChildren(this.parentId);
     this.loggedUser$ = this.user.loggedUser();
     this.initEntity();
-    this.openForm$ = this.form.onOpenCreate(this.parentId).pipe(
-      tap((open) => {
-        const action = open ? 'open' : 'close';
-        console.log('[form state]', action, this.parentId);
-      })
-    );
+    this.openForm$ = this.form.onOpenCreate(this.parentId);
     this.cdr.detectChanges();
   }
 

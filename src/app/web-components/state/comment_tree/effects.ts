@@ -6,7 +6,7 @@ import {COMMENT_SERVICE, COMMENT_FORM_SERVICE, ICommentService, ICommentFormServ
 import {select, Store} from '@ngrx/store';
 import {AppState} from '../app.state';
 import {EntitiesAction} from '../entities/actions';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {ICommentNode} from './reducer';
 import {CommentTreeAction} from './actions';
 import {IEntityComment} from '../../comment/types';
@@ -61,6 +61,16 @@ export class CommentTreeEffects {
     ofType(EntitiesAction.EActions.ADD_ENTITY),
     map((action: EntitiesAction.AddEntity) => createNode(action.entity.id)),
     map((node: ICommentNode) => new CommentTreeAction.AddNode(node)),
+    ),
+  );
+
+  effectAddNode$ = createEffect(() => this.actions$.pipe(
+    ofType(CommentTreeAction.EActions.ADD_NODE),
+    tap(()=> console.log('1111111')),
+    map((action: CommentTreeAction.AddNode) => action.node),
+    switchMap((node: ICommentNode) => this.service.loadChildren(node.id)),
+    tap(()=> console.log('222222')),
+    map((comments: IEntityComment[]) => new EntitiesAction.AddComments(comments))
     ),
   );
 

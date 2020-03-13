@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {IEntityUser, IUserService} from './types';
 import {DATA_SERVICE, IDataService} from '@dangular-data/types';
 import {ETypes} from '../../configs/entities/types';
-import {filter, take, tap} from 'rxjs/operators';
+import {filter, take} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {AppState} from '../../state/app.state';
 import {LoggedUsersAction} from '../../state/logged_user/actions';
@@ -28,12 +28,11 @@ export class UserService implements IUserService {
   }
 
   loggedUser(): Observable<IEntityUser> {
-    console.log('[debug] getUser');
     if (!this._loggedUser$) {
       this._loggedUser$ = this.store.pipe(
         select(LoggedUsersSelect.User),
         filter(Boolean),
-        tap((data) => console.log('[debug] USER', data)),
+        // tap((data) => console.log('[debug] USER', data)),
       );
     }
     return this._loggedUser$;

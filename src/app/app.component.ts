@@ -7,7 +7,7 @@ import {IUserService, USER_SERVICE} from './web-components/services/user/types';
   template: `
     Comment
 
-    <comment-list entity_type="node--article" entity_id="test_entity_id"></comment-list>
+    <comment-list entity_type="node--discussion" entity_id="89c0e307-4942-48de-930e-fdba1ca7f5ae" class="comment-list comments-container"></comment-list>
   `,
 })
 export class AppComponent implements OnInit {

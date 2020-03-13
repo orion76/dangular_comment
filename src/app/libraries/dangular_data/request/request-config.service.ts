@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import {AppState} from '../../../web-components/state/app.state';
 import {ConfigEntitySelect} from '../../../web-components/state/configs/entity/selector';
-import {filter, take} from 'rxjs/operators';
+import {filter, take, tap} from 'rxjs/operators';
 import {ConfigRequestAction} from '../../../web-components/state/configs/request/actions';
 import {ConfigRequestSelect} from '../../../web-components/state/configs/request/selector';
 import {IRequestConfig, REQUEST_CONFIGS} from '@dangular-data/request/types';

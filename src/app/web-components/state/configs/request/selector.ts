@@ -12,6 +12,10 @@ export namespace ConfigRequestSelect {
 
   export const Config = createSelector(
     Configs,
-    (configs, props: { type: string }) => configs[props.type]);
+    (configs, props: { type: string }) => {
+
+      // debugger;
+      return configs[props.type];
+    });
 
 }

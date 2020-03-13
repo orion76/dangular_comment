@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {EConditionOperator, JsonApiRequest} from '@dangular-data/request/jsonapi-request';
 import {IQueryParams, IRequest, IRequestConfigService, IRequestService, REQUEST_CONFIG_SERVICE, TRequestType} from '@dangular-data/request/types';
 
@@ -28,7 +28,9 @@ export class RequestService implements IRequestService {
 
   create(type: TRequestType, entity_type: string, query: IQueryParams): Observable<IRequest> {
     return this.config.get(entity_type).pipe(
-      map((config) => new JsonApiRequest(type, config, query))
+      map((config) => new JsonApiRequest(type, config, query)),
+
+
     );
   }
 }

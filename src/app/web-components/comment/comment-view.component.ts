@@ -6,10 +6,9 @@ import {IEntityComment} from './types';
   selector: 'comment-view',
   template: `
     <comment-state class="comment__state"></comment-state>
-    <div class="comment__content-block">
-      <comment-author [user]="comment.uid" class="comment-author comment-content__author"></comment-author>
-      <comment-content [content]="comment.body" class="comment-content comment-content__text"></comment-content>
-    </div>
+
+    <comment-content [content]="comment.body" class="comment-content comment-content__text"></comment-content>
+
 
   `,
   styles: [],

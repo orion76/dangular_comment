@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ICommentFormService} from './types';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {filter, map, take, tap} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 
 export type TFormMode = 'edit' | 'create';
 
@@ -41,20 +41,16 @@ export class CommentFormService implements ICommentFormService {
 
   setDefault(id: string, mode: TFormMode) {
     this._default = this.createId(mode, id);
-
   }
 
   protected onOpen(id: string, mode: TFormMode) {
     return this.state.pipe(
-      tap((state_id) => console.log('[form state]', state_id)),
       filter(Boolean),
       map((state_id) => {
         const form_id = this.createId(mode, id);
         return state_id === form_id;
       }),
-tap((res)=>console.log('result',res))
+
     );
   }
-
-
 }

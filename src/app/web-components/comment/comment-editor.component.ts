@@ -12,7 +12,7 @@ export interface IButton {
 }
 
 @Component({
-  selector: 'comment-form',
+  selector: 'comment-editor',
   template: `
     <quill-editor theme="snow"
                   [(ngModel)]="content"
@@ -20,6 +20,7 @@ export interface IButton {
                   (onFocus)="onFocus($event)"
                   (onBlur)="onBlur($event)"
                   [disabled]="isDisabled"
+
                   class="comment-form__editor"
     ></quill-editor>
     <div class="comment-form__actions comment-form-actions">
@@ -30,7 +31,7 @@ export interface IButton {
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CommentFormComponent implements OnInit {
+export class CommentEditorComponent implements OnInit {
   @Input() content: string;
   @Output() onSave = new EventEmitter<string>();
   @Output() onCancel = new EventEmitter<string>();

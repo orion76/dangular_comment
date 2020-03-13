@@ -30,7 +30,7 @@ export interface ICommentService {
   saveNew(parentId: string, content: string);
 
   getChildren(parentId: string): Observable<IEntityComment[]>;
-
+  loadChildren(parent_id: string):Observable<IEntityComment[]>
   //-----------
 
   saveUpdate(commentId: string, content: string);
