@@ -1,4 +1,4 @@
-import {IJsonApiEntity, IJsonApiResponse} from '@dangular-common/types/jsonapi-response';
+import {IJsonApiEntity} from '@dangular-common/types/jsonapi-response';
 
 export interface IEntityBase {
   id: string;
@@ -14,7 +14,7 @@ export interface IEntity extends IEntityBase {
 
   setResponse<T extends IEntity>(data: IJsonApiEntity, includes: IJsonApiEntity[]);
 
-  toJsonApi(): IJsonApiResponse
+  toJsonApi(): IJsonApiEntity;
 }
 
 export type TEntityFieldType = 'string' | 'integer' | 'text' | 'boolean' | 'datetime' | 'object';

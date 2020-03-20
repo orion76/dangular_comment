@@ -1,6 +1,6 @@
 import {IEntity, IEntityConfig, IEntityRelationshipConfig} from './types';
 import {createFromResponse, getIn, selectValue, setIn} from '@dangular-common/entity/utils';
-import {IJsonApiEntity, IJsonApiRelationship, IJsonApiRelationshipData, IJsonApiResponse} from '@dangular-common/types/jsonapi-response';
+import {IJsonApiAttributes, IJsonApiEntity, IJsonApiRelationship, IJsonApiRelationshipData, IJsonApiResponse} from '@dangular-common/types/jsonapi-response';
 import {mergeAttributes, mergeRelationships} from '@dangular-common/entity/entity-to-jsonapi';
 
 
@@ -101,6 +101,9 @@ export class Entity implements IEntity {
         setIn(this, ['input', 'attributes', field], value);
         break;
       case 'relationships':
+        if(!value){
+          debugger;
+        }
         const {id, type} = value;
         setIn(this, ['input', 'relationships', field, 'data'], {id, type});
         if (value instanceof Entity) {
@@ -146,15 +149,19 @@ export class Entity implements IEntity {
     return value;
   }
 
-  toJsonApi(): IJsonApiResponse {
+  toJsonApi(): IJsonApiEntity {
     const {id, type} = this;
-    const data: IJsonApiResponse = {
-      data: [{
-        id,
-        type,
-        attributes: mergeAttributes(this.input.attributes, this.data.attributes),
-        relationships: mergeRelationships(this.input.relationships, this.data.relationships),
-      }],
+
+    const input_attributes: IJsonApiAttributes = (this.input && this.input.attributes) ? this.input.attributes : {};
+    const data_attributes: IJsonApiAttributes = (this.data && this.data.attributes) ? this.data.attributes : {};
+    const input_relationships: Record<string, IJsonApiRelationshipData> = (this.input && this.input.relationships) ? this.input.relationships : {};
+    const data_relationships: Record<string, IJsonApiRelationshipData> = (this.data && this.data.relationships) ? this.data.relationships : {};
+
+
+    const data: IJsonApiEntity = {
+      id, type,
+      attributes: mergeAttributes(input_attributes, data_attributes),
+      relationships: mergeRelationships(input_relationships, data_relationships),
     };
 
     return data;
@@ -180,12 +187,7 @@ export class Entity implements IEntity {
   protected createEntity(relationship: IJsonApiRelationship): IEntity {
     const {id, type} = relationship;
     const data = this.findIncluded(id) || {id, type};
-
-    const response: IJsonApiResponse = {
-      included: this.includes,
-      data: [data]
-    };
-    const entity=createFromResponse(Entity, this.configs, response)[0];
+    const entity = createFromResponse(Entity, this.configs, data, this.includes);
     return entity;
   }
 
@@ -216,18 +218,15 @@ export class Entity implements IEntity {
     if (!this.isFieldValueExist(field)) {
       return null;
     }
-    // if (field === 'user_picture') {
-    //   debugger;
-    // }
-    // if (field === 'uid') {
-    //   debugger;
-    // }
     const value = selectValue(['relationships', field], this.input, this.data);
 
-    if (this.configSelf.relationships[field].included) {
-      return Array.isArray(value.data) ? value.data.map((data) => this.getEntity(field, data)) : this.getEntity(field, value.data);
+    if (!value.data) {
+      return null;
     }
 
-    return value;
+    if (field === 'pid') {
+      // debugger;
+    }
+    return Array.isArray(value.data) ? value.data.map((data) => this.getEntity(field, data)) : this.getEntity(field, value.data);
   }
 }

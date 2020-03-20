@@ -1,14 +1,14 @@
 import {Injectable} from '@angular/core';
 import {ICommentFormService} from './types';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {filter, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 export type TFormMode = 'edit' | 'create';
 
 @Injectable()
 export class CommentFormService implements ICommentFormService {
 
-  _default: string;
+  _rootId: string;
   stateSubject = new BehaviorSubject<string>(null);
   state = this.stateSubject.asObservable();
 
@@ -16,11 +16,15 @@ export class CommentFormService implements ICommentFormService {
   }
 
   onOpenCreate(id): Observable<boolean> {
-    return this.onOpen(id, 'create');
+    return this.onOpen(this.createId('create', id));
   }
 
   onOpenEdit(id): Observable<boolean> {
-    return this.onOpen(id, 'edit');
+    return this.onOpen(this.createId('edit', id));
+  }
+
+  onOpenRoot(): Observable<boolean> {
+    return this.onOpen(this._rootId);
   }
 
   openCreate(id: string) {
@@ -31,26 +35,23 @@ export class CommentFormService implements ICommentFormService {
     return `${mode}--${id}`;
   }
 
-  openDefault() {
-    this.stateSubject.next(this._default);
+  openRootForm() {
+    this.stateSubject.next(this._rootId);
   }
 
   openEdit(id: string) {
     this.stateSubject.next(this.createId('edit', id));
   }
 
-  setDefault(id: string, mode: TFormMode) {
-    this._default = this.createId(mode, id);
+  setRootId(id: string, mode: TFormMode) {
+    this._rootId = this.createId(mode, id);
   }
 
-  protected onOpen(id: string, mode: TFormMode) {
+  protected onOpen(form_id: string) {
     return this.state.pipe(
-      filter(Boolean),
       map((state_id) => {
-        const form_id = this.createId(mode, id);
-        return state_id === form_id;
+         return state_id === form_id;
       }),
-
     );
   }
 }

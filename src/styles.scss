@@ -10,16 +10,27 @@
   display: flex;
 }
 
-.comment-editor {
+.comment-form {
   width: 100%;
 }
 
-.comment__content-block {
-  display: flex
+.comment-editor {
+  display: flex;
+
+  &__form {
+    width: 100%
+  }
+
+  &__editor {
+    display: block;
+    background-color: #fff;
+  }
 }
 
-.comment__actions {
-  text-align: right;
+.comment-form-reply {
+  display: block;
+  padding: 1em;
+  background-color: #eee
 }
 
 .comment-root {
@@ -27,25 +38,32 @@
 }
 
 .comment {
-  padding-left: 1em;
-  display:block;
-}
-
-.comment-form {
-  width: 100%;
-  display: flex
-}
-
-.comment-form__editor {
+  padding: 1em 0 0 1em;
   display: block;
-  width: 100%;
+
+  &__content-block {
+    display: flex
+  }
+
+  &__actions {
+    text-align: right;
+  }
+
+  &__view {
+    width: 100%;
+    padding: .5em;
+    border: 1px solid #eee
+
+  }
+
+
 }
 
 .comment-form-actions {
   padding-top: .4em;
   text-align: right;
 
-  .comment-form-actions__button {
+  &__button {
     margin-left: .8em;
     padding: .4em .8em;
   }
@@ -54,7 +72,7 @@
 .comment-author {
   width: 6em;
 
-  .comment-author__avatar {
+  &__avatar {
     width: 4em;
   }
 }
@@ -64,7 +82,15 @@
 }
 
 .comment-actions {
-  .comment-actions__button {
+  &__button {
     margin-left: 1.6em;
+    border:none;
+    background: none;
+    color:#44a;
+    &:hover{
+      cursor: pointer;
+      color:#227;
+    }
+
   }
 }

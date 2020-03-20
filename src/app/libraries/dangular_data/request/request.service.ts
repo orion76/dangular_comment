@@ -29,8 +29,6 @@ export class RequestService implements IRequestService {
   create(type: TRequestType, entity_type: string, query: IQueryParams): Observable<IRequest> {
     return this.config.get(entity_type).pipe(
       map((config) => new JsonApiRequest(type, config, query)),
-
-
     );
   }
 }

@@ -17,7 +17,7 @@ export interface ITransportService {
 
 export interface IDataService {
 
-  createNewFromResponse<T extends IEntity>(response: IJsonApiResponse): Observable<T[]>;
+  createFromResponse<T extends IEntity>(response: IJsonApiResponse): Observable<T | T[]>;
 
   createWithValues<T extends IEntity>(entity_type: string, values?: Partial<T>): Observable<T>;
 

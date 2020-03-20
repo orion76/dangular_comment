@@ -43,7 +43,7 @@ describe('CommentComponent', () => {
 
   it('create from response', () => {
     const data = response.data[0];
-    const entity = createFromResponse<IEntityUser>(Entity, configs, response)[0];
+    const entity = createFromResponse<IEntityUser>(Entity, configs, response.data[0], response.included);
     expect(entity.id).toEqual(data.id);
     expect(entity.type).toEqual(data.type);
     expect(entity.label).toEqual(data.attributes.label as string);

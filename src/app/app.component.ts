@@ -1,33 +1,57 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {DATA_SERVICE, IDataService} from '@dangular-data/types';
 import {IUserService, USER_SERVICE} from './web-components/services/user/types';
+import {COMMENT_FORM_SERVICE, COMMENT_SERVICE, COMMENT_STATE_SERVICE, ICommentFormService, ICommentService, ICommentStateService} from './web-components/services/types';
+import {map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 @Component({
-  selector: 'app-root',
+  selector: 'dangular-comment',
   template: `
-    Comment
+    <div class=" comments-container">
+      <comment-form-reply
+          [entity_id]="entity_id"
+        [disabled]="disabled$|async"
+        class="comment-form comment-form-root"
+      ></comment-form-reply>
+      <comment-list [parent_id]="entity_id" class="comment-children"></comment-list>
+    </div>
 
-    <comment-list entity_type="node--discussion" entity_id="89c0e307-4942-48de-930e-fdba1ca7f5ae" class="comment-list comments-container"></comment-list>
   `,
 })
-export class AppComponent implements OnInit {
-  title = 'dangular-comments';
+export class DangularCommentComponent implements OnInit {
 
-
-  constructor(@Inject(DATA_SERVICE) private data: IDataService,
-              @Inject(USER_SERVICE) private user: IUserService) {
+  @Input() entity_id: string;
+  @Input() entity_type: string;
+  @Input() field_name: string;
+  disabled$: Observable<boolean>;
+  constructor(
+    @Inject(COMMENT_SERVICE) private service: ICommentService,
+    @Inject(COMMENT_STATE_SERVICE) private state: ICommentStateService,
+    @Inject(COMMENT_FORM_SERVICE) private form: ICommentFormService,
+    @Inject(DATA_SERVICE) private data: IDataService,
+    @Inject(USER_SERVICE) private user: IUserService) {
 
   }
 
   ngOnInit() {
 
     this.user.init();
-    // this.data.createNewFromResponse<IEntityUser>(userDefault).pipe(
-    //   take(1),
-    //   map((users) => users[0]),
-    // ).subscribe((user) => {
-    //   console.log('[user] SetUser',user);
-    //   this.user.setUser(user);
-    // });
+    this.initRoot();
   }
+
+  initRoot() {
+    const entity = {id: this.entity_id, type: this.entity_type};
+    this.service.setEntity(entity);
+
+    this.state.commonSetEntity(entity);
+    this.state.commonSetFieldName(this.field_name);
+
+    this.form.setRootId(this.entity_id, 'create');
+    this.disabled$ = this.form.onOpenRoot().pipe(
+      map((open) => !open)
+    );
+    this.form.openRootForm();
+  }
+
 }

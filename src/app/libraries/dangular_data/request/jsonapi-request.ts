@@ -1,5 +1,3 @@
-import {ICondition, IFilter} from '@dangular-data/request/request.service';
-import {getIn} from '@dangular-common/entity/utils';
 import {addConditions, addFilters, addInclude} from '@dangular-data/request/request-util';
 import {IQueryParams, IRequest, IRequestConfig, IRequestOptions, IRequestPointConfig, TRequestSource, TRequestType} from '@dangular-data/request/types';
 
@@ -37,7 +35,8 @@ export class JsonApiRequest implements IRequest {
     let url: string = this.configUrl;
     switch (this.type) {
       case 'one':
-        if(this.query.id){
+      case 'update':
+        if (this.query.id) {
           url = url + '/' + this.query.id;
         }
         break;
@@ -47,22 +46,34 @@ export class JsonApiRequest implements IRequest {
 
   get options(): IRequestOptions {
     const params: Record<string, string> = {};
+    const headers: Record<string, string> = {};
 
     addInclude(params, this.config, this.query);
     addFilters(params, this.config, this.query);
     addConditions(params, this.config, this.query);
-
-    return {params};
+    this.addHeaders(headers);
+    return {params,headers};
   }
 
   _body: any;
 
   get body() {
-    return this._body;
+    return this.query ? this.query.body : null;
   }
 
   set body(body: any) {
     this._body = body;
+  }
+
+  addHeaders(headers: IRequestOptions) {
+     switch (this.type) {
+      case 'add':
+      case 'update':
+        headers = headers || {};
+        headers['Content-Type'] = 'application/vnd.api+json';
+        headers['X-CSRF-Token'] = 'cPBWiGXNsqpi_pdfpwrkLQELVho23kKXi7AXJT_eOm0';
+        break;
+    }
   }
 
   getConfig(config: IRequestConfig): IRequestPointConfig {

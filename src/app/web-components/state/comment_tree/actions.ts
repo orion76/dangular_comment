@@ -4,23 +4,32 @@ import {ICommentNode} from './reducer';
 export namespace CommentTreeAction {
 
   export enum EActions {
-    ADD_NODE = '[COMMENT TREE] ADD_NODE',
-    DELETE_NODE = '[COMMENT TREE] DELETE_NODE',
+    ADD_NODES = '[COMMENT TREE] ADD_NODE',
+    UPDATE_NODES = '[COMMENT TREE] UPDATE_NODES',
+    DELETE_NODES = '[COMMENT TREE] DELETE_NODE',
     ADD_CHILDREN = '[COMMENT TREE] ADD_CHILDREN',
     DELETE_CHILDREN = '[COMMENT TREE] DELETE_CHILDREN',
+
   }
 
-  export class AddNode implements Action {
-    readonly type = EActions.ADD_NODE;
+  export class AddNodes implements Action {
+    readonly type = EActions.ADD_NODES;
 
-    constructor(public node: ICommentNode) {
+    constructor(public nodes: ICommentNode[]) {
     }
   }
 
-  export class DeleteNode implements Action {
-    readonly type = EActions.DELETE_NODE;
+  export class UpdateNodes implements Action {
+    readonly type = EActions.UPDATE_NODES;
 
-    constructor(public id: string) {
+    constructor(public nodes: ICommentNode[]) {
+    }
+  }
+
+  export class DeleteNodes implements Action {
+    readonly type = EActions.DELETE_NODES;
+
+    constructor(public ids: string[]) {
     }
   }
 
@@ -28,6 +37,9 @@ export namespace CommentTreeAction {
     readonly type = EActions.ADD_CHILDREN;
 
     constructor(public id: string, public children: string[]) {
+      if (!children) {
+        debugger;
+      }
     }
   }
 
@@ -39,9 +51,12 @@ export namespace CommentTreeAction {
   }
 
 
+
+
   export type TActions =
- AddNode
-    | DeleteNode
+    AddNodes
+    | UpdateNodes
+    | DeleteNodes
     | AddChildren
     | DeleteChildren;
 

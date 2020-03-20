@@ -1,51 +1,52 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import {COMMENT_SERVICE, ICommentService} from '../services/types';
-import {AppState} from '../state/app.state';
-import {Store} from '@ngrx/store';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {IEntityUser} from '../services/user/types';
+import {QuillEditorComponent} from 'ngx-quill';
 
-
-export interface IButton {
-  name: string,
-  callback: any,
-  hidden?: boolean,
-  disabled?: boolean
-}
 
 @Component({
   selector: 'comment-editor',
   template: `
-    <quill-editor theme="snow"
-                  [(ngModel)]="content"
-                  [modules]="modules"
-                  (onFocus)="onFocus($event)"
-                  (onBlur)="onBlur($event)"
-                  [disabled]="isDisabled"
+    <comment-author *ngIf="author" [user]="author" class="comment-author comment-editor__author"></comment-author>
 
-                  class="comment-form__editor"
-    ></quill-editor>
-    <div class="comment-form__actions comment-form-actions">
-      <input type="submit" (click)="Save()" [disabled]="isDisabled" [hidden]="false" value="Save" class="comment-form-actions__button">
-      <input type="submit" (click)="Cancel()" [disabled]="isDisabled" [hidden]="false" value="Cancel" class="comment-form-actions__button">
+    <div class="comment-form comment-editor__form">
+      <quill-editor theme="snow"
+                    [(ngModel)]="content"
+                    [modules]="modules"
+                    (onFocus)="onFocus($event)"
+                    (onBlur)="onBlur($event)"
+                    [disabled]="disabled"
+                    (onContentChanged)="onContentChanged($event)"
+
+                    class="comment-editor__editor"
+      ></quill-editor>
+      <div class="comment-editor__actions comment-form-actions">
+        <ng-content select="[comment-actions]"></ng-content>
+      </div>
     </div>
+
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentEditorComponent implements OnInit {
+
   @Input() content: string;
-  @Output() onSave = new EventEmitter<string>();
-  @Output() onCancel = new EventEmitter<string>();
-  @Input() isDisabled: boolean;
+  @Input() author: IEntityUser;
+
+  @Output() contentChange = new EventEmitter();
+  @Input() disabled: boolean;
   modules = {
     toolbar: [['bold', 'italic'], ['link', 'image']]
   };
 
-  constructor(@Inject(COMMENT_SERVICE) private service: ICommentService,
-              private store: Store<AppState>,
-              private cdr: ChangeDetectorRef
-  ) {
+  @ViewChild(QuillEditorComponent, {static: true}) editor: QuillEditorComponent;
+
+  constructor(private cdr: ChangeDetectorRef) {
   }
 
+  onContentChanged(event) {
+    this.contentChange.emit(event.html);
+  }
 
   onFocus(event) {
   }
@@ -53,17 +54,8 @@ export class CommentEditorComponent implements OnInit {
   onBlur(event) {
   }
 
-  Save() {
-    this.onSave.emit(this.content);
-
-  }
-
-  Cancel() {
-    this.onCancel.emit(this.content);
-  }
 
   ngOnInit() {
-
   }
 
 }

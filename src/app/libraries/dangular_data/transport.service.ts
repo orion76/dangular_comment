@@ -27,7 +27,7 @@ export class TransportService implements ITransportService {
         response = this.http.post(request.url, request.body, request.options);
         break;
       case 'update':
-        response = this.http.patch(request.url, request.body, request.options);
+        response = this.http.patch(request.url, JSON.stringify(request.body), request.options);
         break;
       case 'delete':
         response = this.http.delete(request.url);

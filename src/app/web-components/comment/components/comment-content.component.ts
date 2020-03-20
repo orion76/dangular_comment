@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, NgModule, OnInit, Renderer2, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'comment-content',

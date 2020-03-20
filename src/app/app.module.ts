@@ -1,28 +1,35 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
-
-import {AppComponent} from './app.component';
+import {Injector, NgModule} from '@angular/core';
 import {CommentModule} from './web-components/comment/comment.module';
-import {HttpClientModule} from '@angular/common/http';
-import {DataModule} from '@dangular-data/data.module';
-import {AppStateModule} from './web-components/state/app.state';
-import {UserModule} from './web-components/services/user/user.module';
+import {CommonModule} from '@angular/common';
+import {DangularCommentComponent} from './app.component';
+import {createCustomElement} from '@angular/elements';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    DangularCommentComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
-    AppStateModule,
-    HttpClientModule,
-    DataModule.forRoot(),
-    // DataModule.forMock(),
-    UserModule,
     CommentModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  entryComponents: [
+    DangularCommentComponent
+  ],
+  // bootstrap: [DangularCommentComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private injector: Injector) {
+
+
+  }
+
+  ngDoBootstrap() {
+    const {injector} = this;
+    const DangularCommentElement = createCustomElement(DangularCommentComponent, {injector});
+
+    customElements.define('dangular-comment', DangularCommentElement);
+  }
+}

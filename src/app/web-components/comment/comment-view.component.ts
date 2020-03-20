@@ -7,7 +7,7 @@ import {IEntityComment} from './types';
   template: `
     <comment-state class="comment__state"></comment-state>
 
-    <comment-content [content]="comment.body" class="comment-content comment-content__text"></comment-content>
+    <comment-content [content]="comment.body.value" class="comment-content comment-content__text"></comment-content>
 
 
   `,
@@ -15,8 +15,7 @@ import {IEntityComment} from './types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentViewComponent implements OnInit {
-
-  @Input() comment: IEntityComment;
+  @Input() comment:IEntityComment;
 
   constructor(private cdr: ChangeDetectorRef) {
   }

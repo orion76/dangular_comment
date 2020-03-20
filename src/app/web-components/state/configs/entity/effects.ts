@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 
 import {Actions} from '@ngrx/effects';
 import {Store} from '@ngrx/store';
-import {AppState} from '../../app.state';
+import {StateModule} from '../../state.module';
 
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ConfigEntityEffects {
 
   constructor(
     private actions$: Actions,
-    private store: Store<AppState>,
+    private store: Store<StateModule>,
   ) {
   }
 

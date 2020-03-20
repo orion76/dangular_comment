@@ -1,4 +1,4 @@
-import {IEntity, IEntityAttributeConfig, IEntityBase, IEntityConfig, IEntityRelationshipConfig} from '@dangular-common/entity/types';
+import {IEntity, IEntityAttributeConfig, IEntityConfig, IEntityRelationshipConfig} from '@dangular-common/entity/types';
 import {IEntityUser} from '../services/user/types';
 
 export interface IEntityImage extends IEntity {
@@ -6,33 +6,44 @@ export interface IEntityImage extends IEntity {
   alt: string;
 }
 
-export  type UFormMode='edit'|'create';
+export  type UFormMode = 'edit' | 'create';
 
+
+export interface IFormattedBody {
+  value?: string;
+  format?: string;
+  processed?: string;
+}
 
 export interface IEntityComment extends IEntity {
-  entity_type: string,
-  entity_id: string,
-  parentId: string,
+  entity_type: string;
+  entity_id: IEntity;
+  field_name: string;
   pid?: IEntityComment;
   uid: IEntityUser;
   subject: string;
-  body: string;
+  body: IFormattedBody;
+
+  child_count: number;
+  is_root: boolean;
   created: string;
   changed: string;
 }
 
 export interface IEntityConfigComment extends IEntityConfig {
   attributes: {
-    entity_type:IEntityAttributeConfig,
-    entity_id:IEntityAttributeConfig,
-    parentId:IEntityAttributeConfig,
-    subject: IEntityAttributeConfig
-    body: IEntityAttributeConfig
-    created: IEntityAttributeConfig
+    entity_type: IEntityAttributeConfig,
+    field_name: IEntityAttributeConfig,
+    subject: IEntityAttributeConfig,
+    body: IEntityAttributeConfig,
+    child_count: IEntityAttributeConfig,
+    is_root: IEntityAttributeConfig,
+    created: IEntityAttributeConfig,
     changed: IEntityAttributeConfig
   };
   relationships: {
-    uid: IEntityRelationshipConfig
+    entity_id: IEntityRelationshipConfig,
+    uid: IEntityRelationshipConfig,
     pid: IEntityRelationshipConfig
   }
 }

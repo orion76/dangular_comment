@@ -11,6 +11,9 @@ export interface IEntityConstructor {
 }
 
 export function createNew<T extends IEntity>(ctor: any, type: string, configs: Record<string, IEntityConfig>): T {
+  if (!configs[type]) {
+    return null;
+  }
   return new ctor(type, configs);
 }
 
@@ -32,14 +35,12 @@ export function createWithValues<T extends IEntity>(ctor: IEntityConstructor, ty
 export function createFromResponse<T extends IEntity>(
   ctor: IEntityConstructor,
   configs: Record<string, IEntityConfig>,
-  response: IJsonApiResponse
-): T[] {
-
-  return response.data.map((data: IJsonApiEntity) => {
-    const entity: T = createNew<T>(ctor, data.type, configs);
-    entity.setResponse<T>(data, response.included);
-    return entity;
-  });
+  data: IJsonApiEntity,
+  included: IJsonApiEntity[]
+): T {
+  const entity: T = createNew<T>(ctor, data.type, configs);
+  entity.setResponse<T>(data, included);
+  return entity;
 }
 
 export function setIn(obj: any, path: string[], value: any) {

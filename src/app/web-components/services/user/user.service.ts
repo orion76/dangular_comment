@@ -3,11 +3,11 @@ import {Observable} from 'rxjs';
 import {IEntityUser, IUserService} from './types';
 import {DATA_SERVICE, IDataService} from '@dangular-data/types';
 import {ETypes} from '../../configs/entities/types';
-import {filter, take} from 'rxjs/operators';
+import {filter, take, tap} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
-import {AppState} from '../../state/app.state';
-import {LoggedUsersAction} from '../../state/logged_user/actions';
-import {LoggedUsersSelect} from '../../state/logged_user/selector';
+import {StateModule} from '../../state/state.module';
+import {CommentCommonAction} from '../../state/comment_common/actions';
+import {CommentCommonSelect} from '../../state/comment_common/selector';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -15,7 +15,7 @@ export class UserService implements IUserService {
   private _loggedUser$: Observable<IEntityUser>;
 
   constructor(@Inject(DATA_SERVICE) private data: IDataService,
-              private store: Store<AppState>
+              private store: Store<StateModule>
   ) {
   }
 
@@ -30,7 +30,7 @@ export class UserService implements IUserService {
   loggedUser(): Observable<IEntityUser> {
     if (!this._loggedUser$) {
       this._loggedUser$ = this.store.pipe(
-        select(LoggedUsersSelect.User),
+        select(CommentCommonSelect.LoggedUser),
         filter(Boolean),
         // tap((data) => console.log('[debug] USER', data)),
       );
@@ -39,7 +39,7 @@ export class UserService implements IUserService {
   }
 
   setUser(user: IEntityUser) {
-    this.store.dispatch(new LoggedUsersAction.Set(user));
+    this.store.dispatch(new CommentCommonAction.SetUser(user));
   }
 
 

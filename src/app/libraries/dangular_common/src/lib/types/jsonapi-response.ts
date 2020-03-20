@@ -18,6 +18,7 @@ export interface IJsonApiEntity extends IJsonApiRelationship {
 }
 
 export interface IJsonApiResponse {
+  jsonapi?:{version:string},
   data: IJsonApiEntity[];
   included?: IJsonApiEntity[];
 }

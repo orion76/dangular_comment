@@ -1,38 +1,36 @@
-
 import {NgModule} from '@angular/core';
 import {ActionReducer, MetaReducer, StoreModule} from '@ngrx/store';
 
-
-import {EntitiesEffects} from './entities/effects';
-import {CommentTreeEffects} from './comment_tree/effects';
 import {EffectsModule} from '@ngrx/effects';
-import {IState as IEntitiesState, reducer as commentTreeReducer} from './comment_tree/reducer';
-import {IState as ICommentTreeState, reducer as entitiesReducer} from './entities/reducer';
+import {IStateCommentTree , reducer as commentTreeReducer} from './comment_tree/reducer';
+import {IStateCommentState , reducer as commentStateReducer} from './comment_state/reducer';
+import {IStateComments , reducer as commentsReducer} from './comments/reducer';
 
 import {IState as IConfigRequestState, reducer as configRequestReducer} from './configs/request/reducer';
 import {IState as IConfigEntityState, reducer as configEntityReducer} from './configs/entity/reducer';
-import {IState as ILoggedUsersState, reducer as usersReducer} from './logged_user/reducer';
+import {IStateCommentCommon, reducer as commentCommonReducer} from './comment_common/reducer';
 import {ConfigRequestEffects} from './configs/request/effects';
 import {ConfigEntityEffects} from './configs/entity/effects';
-import {LoggedUsersEffects} from './logged_user/effects';
+import {CommentsEffects} from './comments.effects';
 
 
-export interface AppState {
-  entities: IEntitiesState;
-  commentTree: ICommentTreeState;
+export interface StateModule {
+  comments: IStateComments;
+  commentTree: IStateCommentTree;
+  commentState: IStateCommentState;
   configRequest: IConfigRequestState;
   configEntity: IConfigEntityState;
-  loggedUser: ILoggedUsersState;
+  commentCommon: IStateCommentCommon;
 }
 
 export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
   return function(state, action) {
-    try{
-      state = reducer(state, action);
-    }catch (e) {
-      console.error('[action]', action.type, {action, state},e);
-    }
-
+    // try{
+    //   state = reducer(state, action);
+    // }catch (e) {
+    //   console.error('[action]', action.type, {action, state},e);
+    // }
+    state = reducer(state, action);
     console.log('[action]', action.type, {action, state});
     return state;
   };
@@ -43,14 +41,15 @@ export const metaReducers: MetaReducer<any>[] = [debug];
 @NgModule({
   imports: [
     StoreModule.forRoot({
-        entities: entitiesReducer,
+        comments: commentsReducer,
         commentTree: commentTreeReducer,
+        commentState: commentStateReducer,
         configRequest: configRequestReducer,
         configEntity: configEntityReducer,
-        loggedUser: usersReducer
+        commentCommon: commentCommonReducer
       },
       {
-        metaReducers,
+        // metaReducers,
         runtimeChecks: {
           // strictStateImmutability: true,
           // strictActionImmutability: true
@@ -58,11 +57,9 @@ export const metaReducers: MetaReducer<any>[] = [debug];
       }
     ),
     EffectsModule.forRoot([
-      EntitiesEffects,
-      CommentTreeEffects,
+      CommentsEffects,
       ConfigRequestEffects,
       ConfigEntityEffects,
-      LoggedUsersEffects,
     ]),
     // StoreDevtoolsModule.instrument({
     //   maxAge: 15,
