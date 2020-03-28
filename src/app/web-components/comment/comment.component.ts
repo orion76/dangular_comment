@@ -2,8 +2,9 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, On
 import {IEntityComment} from './types';
 import {COMMENT_FORM_SERVICE, COMMENT_SERVICE, COMMENT_STATE_SERVICE, ICommentFormService, ICommentService, ICommentStateService} from '../services/types';
 import {Observable} from 'rxjs';
-import {withLatestFrom} from 'rxjs/operators';
+import {filter, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {ICommentNode} from '../state/comment_tree/reducer';
+import {IUserService, USER_SERVICE} from '../services/user/types';
 
 
 @Component({
@@ -26,8 +27,10 @@ import {ICommentNode} from '../state/comment_tree/reducer';
           <div class="comment__view">
             <comment-view [comment]="comment"></comment-view>
             <div class="comment-actions comment__actions">
-              <button (click)="Edit()" class="comment-actions__button">{{'edit'|translate}}</button>
-              <button (click)="Reply()" class="comment-actions__button">{{'reply'|translate}}</button>
+
+              <button *ngIf="canEdit$|async" (click)="Edit()" class="comment-actions__button">{{'edit'|translate}}</button>
+              <button *ngIf="canEdit$|async" (click)="Reply()" class="comment-actions__button">{{'reply'|translate}}</button>
+
               <ng-container *ngIf="comment.child_count">
                 <button *ngIf="(state$|async)?.children; else collapsed"
                         (click)="Collapse()" class="comment-actions__button">{{'collapse'|translate}}({{comment.child_count}})
@@ -56,12 +59,11 @@ import {ICommentNode} from '../state/comment_tree/reducer';
   styleUrls: ['comment.component.scss']
 })
 export class CommentComponent implements OnInit {
+  canEdit$: Observable<boolean>;
   edit$: Observable<boolean>;
   reply$: Observable<boolean>;
   state$: Observable<ICommentNode>;
   comment$: Observable<IEntityComment>;
-  // comment: IEntityComment;
-  // commentSub: Subscription;
   id: string;
   @Input() comment_id: string;
 
@@ -72,6 +74,7 @@ export class CommentComponent implements OnInit {
 
 
   constructor(
+    @Inject(USER_SERVICE) private user: IUserService,
     @Inject(COMMENT_SERVICE) private service: ICommentService,
     @Inject(COMMENT_STATE_SERVICE) private state: ICommentStateService,
     @Inject(COMMENT_FORM_SERVICE) private form: ICommentFormService,
@@ -84,11 +87,7 @@ export class CommentComponent implements OnInit {
   }
 
   ngOnInit() {
-
-
     this.initComment();
-
-
     this.state$ = this.state.commentState(this.id);
   }
 
@@ -96,9 +95,19 @@ export class CommentComponent implements OnInit {
   initComment() {
     this.id = this.comment_id;
     this.comment$ = this.state.getComment(this.comment_id);
-    this.reply$ = this.form.onOpenCreate(this.id);
 
-    this.edit$ = this.form.onOpenEdit(this.id).pipe(
+    this.canEdit$=this.user.hasPermission('edit');
+
+    this.reply$ = this.canEdit$.pipe(
+      tap((has )=> console.log('11111111',has) ),
+      filter(Boolean),
+      switchMap(() => this.form.onOpenCreate(this.id))
+    );
+
+    this.edit$ = this.canEdit$.pipe(
+      tap((has )=> console.log('22222222',has) ),
+      filter(Boolean),
+      switchMap(() => this.form.onOpenEdit(this.id)),
       withLatestFrom(this.comment$, (open, comment) => {
         this.commentBody = comment.body.value;
         return open;
@@ -116,9 +125,7 @@ export class CommentComponent implements OnInit {
   }
 
   Expand() {
-
     this.state.nodeExpand(this.comment_id);
-
   }
 
   Collapse() {

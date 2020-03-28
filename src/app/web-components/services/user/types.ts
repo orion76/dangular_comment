@@ -11,6 +11,8 @@ export interface IUserService {
 
   setUser(user: IEntityUser);
 
+  hasPermission(permission: string);
+
   loggedUser(): Observable<IEntityUser>;
 }
 
@@ -33,6 +35,10 @@ export interface IEntityUser extends IEntity {
 export interface IEntityConfigUser extends IEntityConfig {
 
 }
+
 export interface IEntityConfigUserToken extends IEntityConfig {
+
+}
+export interface IEntityConfigUserRole extends IEntityConfig {
 
 }

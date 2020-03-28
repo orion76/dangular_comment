@@ -1,6 +1,5 @@
 import {IEntity, IEntityConfig} from './types';
-import {IJsonApiEntity, IJsonApiResponse} from '@dangular-common/types/jsonapi-response';
-import {ETypes} from '../../../../../web-components/configs/entities/types';
+import {IJsonApiEntity} from '@dangular-common/types/jsonapi-response';
 
 export function entityUUID(entity: IEntity) {
   return `${entity.type}--${entity.id}`;
@@ -39,6 +38,9 @@ export function createFromResponse<T extends IEntity>(
   included: IJsonApiEntity[]
 ): T {
   const entity: T = createNew<T>(ctor, data.type, configs);
+  if (!entity) {
+    return null;
+  }
   entity.setResponse<T>(data, included);
   return entity;
 }

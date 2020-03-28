@@ -214,7 +214,9 @@ export class Entity implements IEntity {
     if (!this.isFieldExist(field)) {
       console.error('[entity]', 'Field is missing in entity', {field, entity_type: this.type});
     }
-
+    if (field === 'roles') {
+      // debugger;
+    }
     if (!this.isFieldValueExist(field)) {
       return null;
     }
@@ -224,9 +226,7 @@ export class Entity implements IEntity {
       return null;
     }
 
-    if (field === 'pid') {
-      // debugger;
-    }
+
     return Array.isArray(value.data) ? value.data.map((data) => this.getEntity(field, data)) : this.getEntity(field, value.data);
   }
 }

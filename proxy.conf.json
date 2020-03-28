@@ -7,10 +7,7 @@
     },
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "info",
-    "headers": {
-      "Cookie": "SESSb2aa3b7f7728a67a39ae75d790b3105d=uwoM4aeRCjgmoOMVMoyvTHAXXzyT8upmAbBdDnMDM9o; expires=Tue, 31-Mar-2020 11:48:52 GMT; Max-Age=2000000; path=/; domain=.sdd.ti-work.ru; HttpOnly; XDEBUG_SESSION=PHPSTORM"
-    }
+    "logLevel": "info"
   },
   "/sites": {
     "target": {

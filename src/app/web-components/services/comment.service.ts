@@ -10,7 +10,6 @@ import {filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {CommentsAction} from '../state/comments/actions';
 import {CommentsSelect} from '../state/comments/selector';
 import {ETypes} from '../configs/entities/types';
-import {IUserService, USER_SERVICE} from './user/types';
 import {IFilters} from '@dangular-data/request/request.service';
 import {CommentTreeAction} from '../state/comment_tree/actions';
 import {IStateCommentCommon} from '../state/comment_common/reducer';
@@ -67,7 +66,6 @@ export class CommentService implements ICommentService {
 
   constructor(
     @Inject(DATA_SERVICE) private data: IDataService,
-    @Inject(USER_SERVICE) private user: IUserService,
     @Inject(COMMENT_STATE_SERVICE) private state: ICommentStateService,
     private store: Store<StateModule>
   ) {

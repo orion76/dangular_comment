@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {IEntityUser, IUserService} from './types';
 import {DATA_SERVICE, IDataService} from '@dangular-data/types';
 import {ETypes} from '../../configs/entities/types';
-import {filter, take, tap} from 'rxjs/operators';
+import {filter, map, take, tap} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {StateModule} from '../../state/state.module';
 import {CommentCommonAction} from '../../state/comment_common/actions';
@@ -11,12 +11,15 @@ import {CommentCommonSelect} from '../../state/comment_common/selector';
 
 @Injectable()
 export class UserService implements IUserService {
-
   private _loggedUser$: Observable<IEntityUser>;
 
   constructor(@Inject(DATA_SERVICE) private data: IDataService,
               private store: Store<StateModule>
   ) {
+  }
+
+  hasPermission(permission: string): Observable<boolean> {
+    return this.loggedUser().pipe(map((user) => !!user.roles));
   }
 
   init() {
