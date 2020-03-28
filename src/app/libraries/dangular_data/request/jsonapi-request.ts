@@ -24,10 +24,12 @@ export class JsonApiRequest implements IRequest {
 
   configUrl: string;
   config: IRequestPointConfig;
+  headers: Record<string, string>;
 
   constructor(public type: TRequestType, config: IRequestConfig, private query?: IQueryParams) {
     this.config = this.getConfig(config);
     this.configUrl = this.getConfigUrl(config);
+    this.headers = this.defaultHeaders();
   }
 
   get url(): string {
@@ -41,18 +43,19 @@ export class JsonApiRequest implements IRequest {
         }
         break;
     }
-    return url;
+    console.log('[url]', url);
+    return '/' + url;
   }
 
   get options(): IRequestOptions {
     const params: Record<string, string> = {};
-    const headers: Record<string, string> = {};
+    const {headers} = this;
 
     addInclude(params, this.config, this.query);
     addFilters(params, this.config, this.query);
     addConditions(params, this.config, this.query);
-    this.addHeaders(headers);
-    return {params,headers};
+
+    return {params, headers};
   }
 
   _body: any;
@@ -65,15 +68,21 @@ export class JsonApiRequest implements IRequest {
     this._body = body;
   }
 
-  addHeaders(headers: IRequestOptions) {
-     switch (this.type) {
+  addHeader(key: string, value: string) {
+    this.headers[key] = value;
+  }
+
+  defaultHeaders() {
+    let headers: Record<string, string>;
+
+    switch (this.type) {
       case 'add':
       case 'update':
         headers = headers || {};
         headers['Content-Type'] = 'application/vnd.api+json';
-        headers['X-CSRF-Token'] = 'cPBWiGXNsqpi_pdfpwrkLQELVho23kKXi7AXJT_eOm0';
         break;
     }
+    return headers;
   }
 
   getConfig(config: IRequestConfig): IRequestPointConfig {

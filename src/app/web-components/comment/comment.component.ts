@@ -10,44 +10,44 @@ import {ICommentNode} from '../state/comment_tree/reducer';
   selector: 'comment',
   template: `
 
-      <div *ngIf="(comment$|async) as comment">
+    <div *ngIf="(comment$|async) as comment">
 
-        <div class="comment-content comment__content">
-          <comment-author [user]="comment.uid" class="comment-author comment-content__author"></comment-author>
+      <div class="comment-content comment__content">
+        <comment-author [user]="comment.uid" class="comment-author comment-content__author"></comment-author>
 
-          <!--EDIT-->
+        <!--EDIT-->
 
-          <comment-form-edit *ngIf="edit$|async; else comment_view" [comment]="comment"
-                             class="comment-form comment-form-edit"></comment-form-edit>
+        <comment-form-edit *ngIf="edit$|async; else comment_view" [comment]="comment"
+                           class="comment-form comment-form-edit"></comment-form-edit>
 
 
-          <!--VIEW-->
-          <ng-template #comment_view>
-            <div class="comment__view">
-              <comment-view [comment]="comment"></comment-view>
-              <div class="comment-actions comment__actions">
-                <button (click)="Edit()" class="comment-actions__button">edit</button>
-                <button (click)="Reply()" class="comment-actions__button">reply</button>
-                <ng-container *ngIf="comment.child_count">
-                  <button *ngIf="(state$|async)?.children; else collapsed"
-                          (click)="Collapse()" class="comment-actions__button">collapse({{comment.child_count}})
+        <!--VIEW-->
+        <ng-template #comment_view>
+          <div class="comment__view">
+            <comment-view [comment]="comment"></comment-view>
+            <div class="comment-actions comment__actions">
+              <button (click)="Edit()" class="comment-actions__button">{{'edit'|translate}}</button>
+              <button (click)="Reply()" class="comment-actions__button">{{'reply'|translate}}</button>
+              <ng-container *ngIf="comment.child_count">
+                <button *ngIf="(state$|async)?.children; else collapsed"
+                        (click)="Collapse()" class="comment-actions__button">{{'collapse'|translate}}({{comment.child_count}})
+                </button>
+                <ng-template #collapsed>
+                  <button
+                    (click)="Expand()" class="comment-actions__button">{{'expand'|translate}}({{comment.child_count}})
                   </button>
-                  <ng-template #collapsed>
-                    <button
-                      (click)="Expand()" class="comment-actions__button">expand({{comment.child_count}})
-                    </button>
-                  </ng-template>
+                </ng-template>
 
-                </ng-container>
+              </ng-container>
 
-              </div>
             </div>
-          </ng-template>
-        </div>
-        <comment-form-reply *ngIf="reply$|async" [parent]="comment"
-                            class="comment-form comment-form-reply"
-        ></comment-form-reply>
+          </div>
+        </ng-template>
       </div>
+      <comment-form-reply *ngIf="reply$|async" [parent]="comment"
+                          class="comment-form comment-form-reply"
+      ></comment-form-reply>
+    </div>
 
     <comment-list [parent_id]="id" class="comment-children"></comment-list>
 

@@ -1,5 +1,6 @@
 export enum ETypes {
   USER = 'user--user',
+  USER_TOKEN = 'user--token',
   COMMENT = 'comment--comment',
   FILE = 'file--file',
   NODE_ARTICLE = 'node--article',

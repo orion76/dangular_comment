@@ -22,7 +22,7 @@ export interface IRequest {
   readonly url: string;
   readonly body: any;
   readonly options: IRequestOptions;
-
+  addHeader(key: string, value: string);
 }
 
 export interface IRequestPointConfig {

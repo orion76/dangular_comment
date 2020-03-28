@@ -33,3 +33,6 @@ export interface IEntityUser extends IEntity {
 export interface IEntityConfigUser extends IEntityConfig {
 
 }
+export interface IEntityConfigUserToken extends IEntityConfig {
+
+}

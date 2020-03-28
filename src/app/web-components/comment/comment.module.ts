@@ -21,6 +21,7 @@ import {AppStateModule} from '../state/state.module';
 import {HttpClientModule} from '@angular/common/http';
 import {DataModule} from '@dangular-data/data.module';
 import {UserModule} from '../services/user/user.module';
+import {TranslateModule} from '@dangular-common/translate/translate.pipe';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import {UserModule} from '../services/user/user.module';
     QuillModule,
     QuillModule.forRoot(),
     FormsModule,
+    TranslateModule,
   ],
   exports: [
     CommentComponent,
@@ -65,5 +67,4 @@ import {UserModule} from '../services/user/user.module';
   ],
 })
 export class CommentModule {
-
 }

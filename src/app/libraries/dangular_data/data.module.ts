@@ -7,6 +7,8 @@ import {DataService} from './data.service';
 import {RequestConfigService} from './request/request-config.service';
 import {EntityConfigService} from './entity-config.service';
 import {IRequestConfig, REQUEST_CONFIG_SERVICE, REQUEST_CONFIGS, REQUEST_SERVICE} from '@dangular-data/request/types';
+import {ACCESS_SERVICE} from '@dangular-data/access/types';
+import {AccessService} from '@dangular-data/access/access.service';
 
 
 @NgModule({
@@ -21,6 +23,7 @@ export class DataModule {
         {provide: ENTITY_CONFIG_SERVICE, useClass: EntityConfigService},
         {provide: REQUEST_SERVICE, useClass: RequestService},
         {provide: TRANSPORT_SERVICE, useClass: TransportService},
+        {provide: ACCESS_SERVICE, useClass: AccessService},
         {provide: DATA_SERVICE, useClass: DataService},
       ]
     };

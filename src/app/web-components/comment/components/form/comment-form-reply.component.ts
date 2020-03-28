@@ -17,8 +17,8 @@ import {IEntityComment} from '../../types';
                     class="comment-editor">
 
       <div class="comment-form__actions comment-form-actions" comment-actions>
-        <input type="submit" (click)="Save()" [disabled]="disabled" [hidden]="false" value="Save" class="comment-form-actions__button">
-        <input type="submit" (click)="Cancel()" [disabled]="disabled" [hidden]="false" value="Cancel" class="comment-form-actions__button">
+        <input type="submit" (click)="Save()" [disabled]="disabled" [hidden]="false" value="{{'save'|translate}}" class="comment-form-actions__button">
+        <input type="submit" (click)="Cancel()" [disabled]="disabled" [hidden]="false" value="{{'cancel'|translate}}" class="comment-form-actions__button">
       </div>
 
     </comment-editor>

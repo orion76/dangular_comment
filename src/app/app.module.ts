@@ -4,6 +4,8 @@ import {CommentModule} from './web-components/comment/comment.module';
 import {CommonModule} from '@angular/common';
 import {DangularCommentComponent} from './app.component';
 import {createCustomElement} from '@angular/elements';
+import {TranslateModule} from '@dangular-common/translate/translate.pipe';
+import {translates} from './translates';
 
 
 @NgModule({
@@ -14,6 +16,8 @@ import {createCustomElement} from '@angular/elements';
     CommonModule,
     BrowserModule,
     CommentModule,
+    TranslateModule,
+    TranslateModule.forRoot(translates)
   ],
   entryComponents: [
     DangularCommentComponent
@@ -23,13 +27,11 @@ import {createCustomElement} from '@angular/elements';
 export class AppModule {
   constructor(private injector: Injector) {
 
-
   }
 
   ngDoBootstrap() {
     const {injector} = this;
     const DangularCommentElement = createCustomElement(DangularCommentComponent, {injector});
-
-    customElements.define('dangular-comment', DangularCommentElement);
+    customElements.define('dangular-comments', DangularCommentElement);
   }
 }

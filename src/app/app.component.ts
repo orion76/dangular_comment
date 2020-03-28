@@ -6,7 +6,7 @@ import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
 @Component({
-  selector: 'dangular-comment',
+  selector: 'dangular-comments',
   template: `
     <div class=" comments-container">
       <comment-form-reply
@@ -31,11 +31,9 @@ export class DangularCommentComponent implements OnInit {
     @Inject(COMMENT_FORM_SERVICE) private form: ICommentFormService,
     @Inject(DATA_SERVICE) private data: IDataService,
     @Inject(USER_SERVICE) private user: IUserService) {
-
   }
 
   ngOnInit() {
-
     this.user.init();
     this.initRoot();
   }
