@@ -1,8 +1,8 @@
 import {CommentCommonAction} from './actions';
 import {IEntityUser} from '../../services/user/types';
+import {IEntityBase} from '@dangular-common/entity/types';
 import TActions = CommentCommonAction.TActions;
 import EActions = CommentCommonAction.EActions;
-import {IEntity, IEntityBase} from '@dangular-common/entity/types';
 
 export const anonymousId = '71041348-8852-4ed0-9658-71d16089fb8c';
 

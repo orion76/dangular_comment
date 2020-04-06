@@ -1,7 +1,7 @@
 import {Action} from '@ngrx/store';
-import {IEntityComment} from '../../comment/types';
 import {IEntity} from '@dangular-common/entity/types';
 import {ICommentStates} from '../comment_state/reducer';
+import {IEntityComment} from '../../configs/entities/comment/comment--comment';
 
 export namespace CommentsAction {
 

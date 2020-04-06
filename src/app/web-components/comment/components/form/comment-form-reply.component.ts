@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {IEntityUser, IUserService, USER_SERVICE} from '../../../services/user/types';
 import {COMMENT_FORM_SERVICE, COMMENT_SERVICE, ICommentFormService, ICommentService} from '../../../services/types';
-import {IEntityComment} from '../../types';
+import {IEntityComment} from '../../../configs/entities/comment/comment--comment';
 
 
 @Component({
@@ -13,7 +13,7 @@ import {IEntityComment} from '../../types';
     <comment-editor [(content)]="commentContent"
                     [author]="loggedUser$|async"
                     [disabled]="disabled"
-
+                    [insert]="insert"
                     class="comment-editor">
 
       <div class="comment-form__actions comment-form-actions" comment-actions>
@@ -35,6 +35,8 @@ export class CommentFormReplyComponent implements OnInit {
   loggedUser$: Observable<IEntityUser>;
   commentContent: string;
 
+  insert = new EventEmitter();
+
   constructor(@Inject(COMMENT_SERVICE) private service: ICommentService,
               @Inject(USER_SERVICE) private user: IUserService,
               @Inject(COMMENT_FORM_SERVICE) private form: ICommentFormService,
@@ -42,6 +44,7 @@ export class CommentFormReplyComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.commentContent='';
     this.loggedUser$ = this.user.loggedUser();
   }
 

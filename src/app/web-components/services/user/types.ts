@@ -1,7 +1,7 @@
 import {IEntity, IEntityConfig} from '@dangular-common/entity/types';
 import {InjectionToken} from '@angular/core';
 import {Observable} from 'rxjs';
-import {IEntityFile} from '../../configs/entities/items/file--file';
+import {IEntityFile} from '../../configs/entities/media/file--file';
 
 
 export const USER_SERVICE = new InjectionToken<IUserService>('USER_SERVICE');
@@ -11,7 +11,7 @@ export interface IUserService {
 
   setUser(user: IEntityUser);
 
-  hasPermission(permission: string);
+  hasPermission(permission: string): Observable<boolean>;
 
   loggedUser(): Observable<IEntityUser>;
 }

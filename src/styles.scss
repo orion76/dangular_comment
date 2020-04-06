@@ -1,5 +1,12 @@
 @import "./assets/quill";
 
+.float-panel-quote{
+
+  padding: .3em;
+  border: 1px solid #bbb;
+  border-radius: .1em
+}
+
 .comments-container {
   display: block;
   max-width: 40em;
@@ -84,13 +91,47 @@
 .comment-actions {
   &__button {
     margin-left: 1.6em;
-    border:none;
+    border: none;
     background: none;
-    color:#44a;
-    &:hover{
+    color: #44a;
+
+    &:hover {
       cursor: pointer;
-      color:#227;
+      color: #227;
     }
 
+  }
+}
+
+.comment__state{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.vote-up-down {
+
+
+  [disabled] {
+    color: #999;
+  }
+
+  &__up, &__down {
+    border: none;
+    background: none;
+
+  }:not [ disabled ] & __up,:not [ disabled ] & __down {
+
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+  &__up {
+    color: #57f;
+  }
+
+  &__down {
+    color: #f24;
   }
 }

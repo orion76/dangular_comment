@@ -7,7 +7,10 @@
     },
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "info"
+    "logLevel": "info",
+    "headers": {
+      "Cookie": "SESSb2aa3b7f7728a67a39ae75d790b3105d=PVCLoh19oFQKFGiBm43kj1F1vitMdN4SF8uI0_4NVwU; XDEBUG_SESSION=PHPSTORM"
+    }
   },
   "/sites": {
     "target": {

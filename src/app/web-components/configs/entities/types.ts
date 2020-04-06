@@ -7,5 +7,7 @@ export enum ETypes {
   NODE_DISCUSSION = 'node--discussion',
   // TODO
   USER_ROLE = 'user_role--user_role',
-  USER_PROFILE_COMMON = 'profile--common'
+  USER_PROFILE_COMMON = 'profile--common',
+  VOTE_UPDOWN = 'vote--updown',
+  VOTE_RESULT_UPDOWN = 'vote-result--updown'
 }

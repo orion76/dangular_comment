@@ -1,4 +1,4 @@
-import {IEntityNodeArticle} from '../../../../../../web-components/configs/entities/items/node--article';
+import {IEntityNodeArticle} from '../../../../../../web-components/configs/entities/node/node--article';
 import {ETypes} from '../../../../../../web-components/configs/entities/types';
 import {IEntityConfig} from '@dangular-common/entity/types';
 import {IEntityUser} from '../../../../../../web-components/services/user/types';

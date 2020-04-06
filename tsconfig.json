@@ -8,6 +8,15 @@
       ],
       "@dangular-data/*": [
         "src/app/libraries/dangular_data/*"
+      ],
+      "@dangular-components/*": [
+        "src/app/libraries/dangular_components/*"
+      ],
+      "@dangular-services/*": [
+        "src/app/libraries/dangular_services/*"
+      ],
+      "@github/*": [
+        "src/app/github/*"
       ]
     },
     "outDir": "./dist/out-tsc",

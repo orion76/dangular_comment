@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {ICommentFormService} from './types';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {distinctUntilChanged, map, share, tap} from 'rxjs/operators';
 
 export type TFormMode = 'edit' | 'create';
 
@@ -12,19 +12,31 @@ export class CommentFormService implements ICommentFormService {
   stateSubject = new BehaviorSubject<string>(null);
   state = this.stateSubject.asObservable();
 
+  isOpen$: Observable<boolean>;
+  insertToOpen$ = new EventEmitter<string>();
+
   constructor() {
   }
 
+  insertToOpen(value: string) {
+    this.insertToOpen$.emit(value);
+  }
+
+  onInsertOpen(): Observable<string> {
+    return this.insertToOpen$;
+  }
+
+
   onOpenCreate(id): Observable<boolean> {
-    return this.onOpen(this.createId('create', id));
+    return this.onFormOpen(this.createId('create', id));
   }
 
   onOpenEdit(id): Observable<boolean> {
-    return this.onOpen(this.createId('edit', id));
+    return this.onFormOpen(this.createId('edit', id));
   }
 
   onOpenRoot(): Observable<boolean> {
-    return this.onOpen(this._rootId);
+    return this.onFormOpen(this._rootId);
   }
 
   openCreate(id: string) {
@@ -47,10 +59,22 @@ export class CommentFormService implements ICommentFormService {
     this._rootId = this.createId(mode, id);
   }
 
-  protected onOpen(form_id: string) {
+  isOpen() {
+    if (!this.isOpen$) {
+      this.isOpen$ = this.state.pipe(
+        map((state_id) => state_id !== this._rootId),
+        tap((val )=> console.log('Form open',val) ),
+        distinctUntilChanged(),
+        // share()
+      );
+    }
+    return this.isOpen$;
+  }
+
+  protected onFormOpen(form_id: string) {
     return this.state.pipe(
       map((state_id) => {
-         return state_id === form_id;
+        return state_id === form_id;
       }),
     );
   }

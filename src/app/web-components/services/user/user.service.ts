@@ -3,23 +3,29 @@ import {Observable} from 'rxjs';
 import {IEntityUser, IUserService} from './types';
 import {DATA_SERVICE, IDataService} from '@dangular-data/types';
 import {ETypes} from '../../configs/entities/types';
-import {filter, map, take, tap} from 'rxjs/operators';
+import {filter, map, share, take, tap} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
-import {StateModule} from '../../state/state.module';
+import {AppStateModule} from '../../../app-state.module';
 import {CommentCommonAction} from '../../state/comment_common/actions';
 import {CommentCommonSelect} from '../../state/comment_common/selector';
 
 @Injectable()
 export class UserService implements IUserService {
   private _loggedUser$: Observable<IEntityUser>;
+  private permissions = [];
 
   constructor(@Inject(DATA_SERVICE) private data: IDataService,
-              private store: Store<StateModule>
+              private store: Store<AppStateModule>
   ) {
   }
 
   hasPermission(permission: string): Observable<boolean> {
-    return this.loggedUser().pipe(map((user) => !!user.roles));
+    if (!this.permissions[permission]) {
+      this.permissions[permission] = this.loggedUser().pipe(
+        map((user) => !!user.roles),
+      );
+    }
+    return this.permissions[permission];
   }
 
   init() {
@@ -35,7 +41,6 @@ export class UserService implements IUserService {
       this._loggedUser$ = this.store.pipe(
         select(CommentCommonSelect.LoggedUser),
         filter(Boolean),
-        // tap((data) => console.log('[debug] USER', data)),
       );
     }
     return this._loggedUser$;

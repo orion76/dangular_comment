@@ -23,7 +23,7 @@ export interface IDataService {
 
   one<T extends IEntity>(entity_type: string, params?: IQueryParams): Observable<T>;
 
-  list<T extends IEntity>(entity_type: string, filter: any): Observable<T[]>;
+  list<T extends IEntity>(entity_type: string, params: IQueryParams): Observable<T[]>;
 
   add<T extends IEntity>(entity: T): Observable<T>;
 

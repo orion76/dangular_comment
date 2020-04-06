@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
-import {StateModule} from '../../../web-components/state/state.module';
+import {AppStateModule} from '../../../app-state.module';
 import {filter, take} from 'rxjs/operators';
 import {ConfigRequestAction} from '../../../web-components/state/configs/request/actions';
 import {ConfigRequestSelect} from '../../../web-components/state/configs/request/selector';
@@ -22,7 +22,7 @@ export interface IRequestConfigService {
 export class RequestConfigService implements IRequestConfigService {
 
   constructor(@Inject(REQUEST_CONFIGS) protected configs: IRequestConfig[],
-              protected store: Store<StateModule>) {
+              protected store: Store<AppStateModule>) {
     this.addMany(configs);
   }
 

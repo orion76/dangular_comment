@@ -1,10 +1,12 @@
 import {InjectionToken} from '@angular/core';
-import {IEntityComment, IFormattedBody} from '../comment/types';
+import {IFormattedBody} from '../comment/types';
 import {Observable} from 'rxjs';
 import {IEntityBase} from '@dangular-common/entity/types';
 import {TFormMode} from './comment-form.service';
 import {ICommentNode} from '../state/comment_tree/reducer';
 import {IStateCommentCommon as ICommonState} from '../state/comment_common/reducer';
+import {ICommentState} from '../state/comment_state/reducer';
+import {IEntityComment} from '../configs/entities/comment/comment--comment';
 
 
 export const COMMENT_FORM_SERVICE = new InjectionToken<ICommentFormService>('COMMENT_FORM_SERVICE');
@@ -12,7 +14,9 @@ export const COMMENT_SERVICE = new InjectionToken<ICommentService>('COMMENT_SERV
 export const COMMENT_STATE_SERVICE = new InjectionToken<ICommentStateService>('COMMENT_STATE_SERVICE');
 
 export interface ICommentFormService {
+  onInsertOpen():Observable<string>;
 
+  insertToOpen(value: string)
   setRootId(id: string, mode: TFormMode);
 
   openCreate(id: string);
@@ -20,6 +24,8 @@ export interface ICommentFormService {
   openEdit(id: string);
 
   openRootForm();
+
+  isOpen(): Observable<boolean>;
 
   onOpenRoot(): Observable<boolean>;
 
@@ -31,7 +37,13 @@ export interface ICommentFormService {
 
 export interface ICommentStateService {
   getComment(id): Observable<IEntityComment>;
+
+  getCommentState(id): Observable<ICommentState>;
+
+  setEditable(id: string, editable: boolean);
+
   nodeExpand(id: string);
+
   nodeCollapse(id: string);
 
   onNodeExpanded(id: string, value: boolean): Observable<ICommentNode>;
@@ -43,6 +55,7 @@ export interface ICommentStateService {
   commonComplete(): Observable<ICommonState>;
 
   commonSetEntity(entity: IEntityBase);
+
   commonSetFieldName(field_name: string);
 }
 

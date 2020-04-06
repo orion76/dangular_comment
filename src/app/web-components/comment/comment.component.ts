@@ -1,10 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
-import {IEntityComment} from './types';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {COMMENT_FORM_SERVICE, COMMENT_SERVICE, COMMENT_STATE_SERVICE, ICommentFormService, ICommentService, ICommentStateService} from '../services/types';
-import {Observable} from 'rxjs';
-import {filter, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {Observable, Subscription} from 'rxjs';
+import {distinctUntilChanged, filter, map, share, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {ICommentNode} from '../state/comment_tree/reducer';
 import {IUserService, USER_SERVICE} from '../services/user/types';
+import {ICommentState} from '../state/comment_state/reducer';
+import {IEntityComment} from '../configs/entities/comment/comment--comment';
+import {ITextSelectionService, TEXT_SELECTION_SERVICE} from '@dangular-components/text-selection/types';
 
 
 @Component({
@@ -28,8 +30,11 @@ import {IUserService, USER_SERVICE} from '../services/user/types';
             <comment-view [comment]="comment"></comment-view>
             <div class="comment-actions comment__actions">
 
-              <button *ngIf="canEdit$|async" (click)="Edit()" class="comment-actions__button">{{'edit'|translate}}</button>
-              <button *ngIf="canEdit$|async" (click)="Reply()" class="comment-actions__button">{{'reply'|translate}}</button>
+              <button *ngIf="editable$|async" (click)="Edit()" class="comment-actions__button">
+                <time-counter type="down" [start]="time_edit" (onDone)="onEditDenied()"></time-counter>
+                {{'edit'|translate}}
+              </button>
+              <button *ngIf="canReply$|async" (click)="Reply()" class="comment-actions__button">{{'reply'|translate}}</button>
 
               <ng-container *ngIf="comment.child_count">
                 <button *ngIf="(state$|async)?.children; else collapsed"
@@ -58,13 +63,19 @@ import {IUserService, USER_SERVICE} from '../services/user/types';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['comment.component.scss']
 })
-export class CommentComponent implements OnInit {
-  canEdit$: Observable<boolean>;
+export class CommentComponent implements OnInit, OnDestroy {
+  editable$: Observable<boolean>;
+  canReply$: Observable<boolean>;
   edit$: Observable<boolean>;
   reply$: Observable<boolean>;
   state$: Observable<ICommentNode>;
   comment$: Observable<IEntityComment>;
+  commentState$: Observable<ICommentState>;
+
+  _subscriptions: Subscription[] = [];
+
   id: string;
+  @Input() time_edit = 300;
   @Input() comment_id: string;
 
   @Input() entity_type: string;
@@ -82,30 +93,51 @@ export class CommentComponent implements OnInit {
   ) {
   }
 
+  ngOnInit() {
+    this.initComment();
+    this.state$ = this.state.commentState(this.id);
+
+    this.form.isOpen().subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this._subscriptions.forEach((subscription) => subscription.unsubscribe());
+  }
+
+  onEditDenied() {
+    this.state.setEditable(this.id, false);
+  }
+
   debug(vars: any) {
     console.log('[debug] component', vars);
   }
 
-  ngOnInit() {
-    this.initComment();
-    this.state$ = this.state.commentState(this.id);
+
+  isNew() {
+    return !this.comment_id;
   }
 
-
   initComment() {
+
     this.id = this.comment_id;
     this.comment$ = this.state.getComment(this.comment_id);
+    this.commentState$ = this.state.getCommentState(this.comment_id).pipe(filter(Boolean), share());
 
-    this.canEdit$=this.user.hasPermission('edit');
-
-    this.reply$ = this.canEdit$.pipe(
-      tap((has )=> console.log('11111111',has) ),
-      filter(Boolean),
-      switchMap(() => this.form.onOpenCreate(this.id))
+    this.editable$ = this.user.hasPermission('reply[TODO]').pipe(
+      switchMap(() => this.commentState$),
+      map((state) => state.editable),
+      share()
     );
 
-    this.edit$ = this.canEdit$.pipe(
-      tap((has )=> console.log('22222222',has) ),
+    this.canReply$ = this.user.hasPermission('reply[TODO]');
+
+    this.reply$ = this.canReply$.pipe(
+      filter(Boolean),
+      switchMap(() => this.form.onOpenCreate(this.id)),
+      share()
+    );
+
+    this.edit$ = this.editable$.pipe(
       filter(Boolean),
       switchMap(() => this.form.onOpenEdit(this.id)),
       withLatestFrom(this.comment$, (open, comment) => {
@@ -113,6 +145,7 @@ export class CommentComponent implements OnInit {
         return open;
       })
     );
+
   }
 
   Edit() {

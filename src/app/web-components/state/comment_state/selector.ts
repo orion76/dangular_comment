@@ -1,7 +1,7 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
 import {adapter, ICommentState, IStateCommentState} from './reducer';
 import {Dictionary} from '@ngrx/entity';
-import {StateModule} from '../state.module';
+import {AppStateModule} from '../../../app-state.module';
 
 
 export namespace CommentStateSelect {
@@ -11,19 +11,7 @@ export namespace CommentStateSelect {
 
   export const Items = createSelector(State, selectEntities);
 
-  export const ItemsByIds = createSelector(
-    Items,
-    (items: Dictionary<ICommentState>, props: { ids: string[] }) => {
-      return props.ids.reduce((acc, id) => {
-        if (items[id]) {
-          acc[id] = items[id];
-        }
-        return acc;
-      }, {});
-    }
-  );
-
-  export const Item = createSelector<StateModule, { id: string }, Dictionary<ICommentState>, ICommentState>(
+  export const Comment = createSelector<AppStateModule, { id: string }, Dictionary<ICommentState>, ICommentState>(
     Items,
     (items, props: { id: string }) => items[props.id]
   );

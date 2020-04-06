@@ -4,7 +4,7 @@ import TActions = CommentStateAction.TActions;
 import EActions = CommentStateAction.EActions;
 
 export interface ICommentStates {
-  loaded?: boolean;
+  editable?: boolean;
   expanded?: boolean;
   hidden?: boolean;
 }
@@ -65,14 +65,9 @@ export function reducer(state: IStateCommentState = initialState, action: TActio
       state = adapter.removeMany(ids, state);
       break;
     }
-    case EActions.CHILDREN_LOADED: {
-      const {ids} = action;
-      state = adapter.upsertMany(createUpdates(ids, 'loaded', true, state), state);
-      break;
-    }
-    case EActions.CHILDREN_NOT_LOADED: {
-      const {ids} = action;
-      state = adapter.upsertMany(createUpdates(ids, 'loaded', false, state), state);
+    case EActions.SET_EDITABLE: {
+      const {id, editable} = action;
+      state = adapter.upsertOne({id, editable}, state);
       break;
     }
 

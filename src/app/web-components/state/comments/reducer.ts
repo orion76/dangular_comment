@@ -1,8 +1,8 @@
 import {CommentsAction} from './actions';
-import {IEntityComment} from '../../comment/types';
 import {createEntityAdapter, EntityAdapter, EntityState, Update} from '@ngrx/entity';
 import TActions = CommentsAction.TActions;
 import EActions = CommentsAction.EActions;
+import {IEntityComment} from '../../configs/entities/comment/comment--comment';
 
 
 export interface IStateComments extends EntityState<IEntityComment> {

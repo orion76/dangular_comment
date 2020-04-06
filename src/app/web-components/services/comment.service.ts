@@ -1,11 +1,11 @@
 import {Inject, Injectable} from '@angular/core';
 import {COMMENT_STATE_SERVICE, ICommentService, ICommentStateService} from './types';
 import {DATA_SERVICE, IDataService} from '@dangular-data/types';
-import {IEntityComment, IFormattedBody} from '../comment/types';
+import {IFormattedBody} from '../comment/types';
 import {Observable, of} from 'rxjs';
 import {IEntityBase} from '@dangular-common/entity/types';
 import {select, Store} from '@ngrx/store';
-import {StateModule} from '../state/state.module';
+import {AppStateModule} from '../../app-state.module';
 import {filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {CommentsAction} from '../state/comments/actions';
 import {CommentsSelect} from '../state/comments/selector';
@@ -15,6 +15,7 @@ import {CommentTreeAction} from '../state/comment_tree/actions';
 import {IStateCommentCommon} from '../state/comment_common/reducer';
 import {CommentTreeSelect} from '../state/comment_tree/selector';
 import {ICommentNode} from '../state/comment_tree/reducer';
+import {IEntityComment} from '../configs/entities/comment/comment--comment';
 
 function EntityTypeWithoutBundle(entity_type: string): string {
   return entity_type.split('--')[0];
@@ -67,7 +68,7 @@ export class CommentService implements ICommentService {
   constructor(
     @Inject(DATA_SERVICE) private data: IDataService,
     @Inject(COMMENT_STATE_SERVICE) private state: ICommentStateService,
-    private store: Store<StateModule>
+    private store: Store<AppStateModule>
   ) {
 
   }
@@ -163,6 +164,7 @@ export class CommentService implements ICommentService {
         switchMap((data: Partial<IEntityComment>) => this.data.createWithValues<IEntityComment>(ETypes.COMMENT, data)),
         switchMap((comment: IEntityComment) => this.data.add<IEntityComment>(comment)),
         tap((comment: IEntityComment) => this.store.dispatch(new CommentsAction.CommentAdd(comment))),
+        tap((comment: IEntityComment) => this.state.setEditable(comment.id, true)),
         take(1)
       );
   }

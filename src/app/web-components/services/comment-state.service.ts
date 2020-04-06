@@ -1,18 +1,20 @@
 import {Injectable} from '@angular/core';
 import {select, Store} from '@ngrx/store';
-import {StateModule} from '../state/state.module';
+import {AppStateModule} from '../../app-state.module';
 import {ICommentStateService} from './types';
 import {Observable} from 'rxjs';
 import {ICommentNode} from '../state/comment_tree/reducer';
 import {CommentTreeSelect} from '../state/comment_tree/selector';
-import {filter, take} from 'rxjs/operators';
+import {filter, take, tap} from 'rxjs/operators';
 import {IStateCommentCommon as ICommonState} from '../state/comment_common/reducer';
 import {CommentCommonSelect} from '../state/comment_common/selector';
 import {IEntityBase} from '@dangular-common/entity/types';
 import {CommentCommonAction} from '../state/comment_common/actions';
 import {CommentStateAction} from '../state/comment_state/actions';
 import {CommentsSelect} from '../state/comments/selector';
-import {IEntityComment} from '../comment/types';
+import {CommentStateSelect} from '../state/comment_state/selector';
+import {ICommentState} from '../state/comment_state/reducer';
+import {IEntityComment} from '../configs/entities/comment/comment--comment';
 
 
 @Injectable()
@@ -20,18 +22,25 @@ export class CommentStateService implements ICommentStateService {
 
 
   constructor(
-    private store: Store<StateModule>
+    private store: Store<AppStateModule>
   ) {
 
   }
 
   getComment(id): Observable<IEntityComment> {
-    // console.log('[COMMENT SUBSCRIBE]',id);
     return this.store.pipe(
       select(CommentsSelect.Comment, {id}),
-      // tap((comment)=>console.log('!! getComment',id,comment ))
-      // distinctUntilChanged((a: IEntityComment, b: IEntityComment) => a.changed === b.changed),
     );
+  }
+
+  getCommentState(id): Observable<ICommentState> {
+    return this.store.pipe(
+      select(CommentStateSelect.Comment, {id}),
+    );
+  }
+
+  setEditable(id: string, editable: boolean) {
+    this.store.dispatch(new CommentStateAction.setEditable(id, editable));
   }
 
   onNodeExpanded(id: string, value: boolean): Observable<ICommentNode> {

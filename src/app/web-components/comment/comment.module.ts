@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {COMMENT_FORM_SERVICE, COMMENT_SERVICE, COMMENT_STATE_SERVICE} from '../services/types';
 import {CommentFormService} from '../services/comment-form.service';
-import {QuillModule} from 'ngx-quill';
+
 import {CommentService} from '../services/comment.service';
 import {EntitiesConfigModule} from '../configs/entities/module';
 import {FormsModule} from '@angular/forms';
@@ -17,24 +17,30 @@ import {CommentActionsComponent} from './components/comment-actions.component';
 import {CommentEditorComponent} from './comment-editor.component';
 import {CommentViewComponent} from './comment-view.component';
 import {CommentListComponent} from './comment-list.component';
-import {AppStateModule} from '../state/state.module';
 import {HttpClientModule} from '@angular/common/http';
 import {DataModule} from '@dangular-data/data.module';
 import {UserModule} from '../services/user/user.module';
 import {TranslateModule} from '@dangular-common/translate/translate.pipe';
+import {TimerModule} from '@dangular-components/timer/timer.component';
+import {VoteUpDownModule} from '@dangular-components/vote/vote.module';
+import {TextSelectionModule} from '@dangular-components/text-selection/module';
+import {AceModule} from 'ngx-ace-wrapper';
+
 
 @NgModule({
   imports: [
     CommonModule,
-    AppStateModule,
     HttpClientModule,
     DataModule.forRoot(),
     UserModule,
     EntitiesConfigModule,
-    QuillModule,
-    QuillModule.forRoot(),
     FormsModule,
     TranslateModule,
+    TimerModule,
+    VoteUpDownModule,
+    TextSelectionModule,
+    AceModule,
+
   ],
   exports: [
     CommentComponent,

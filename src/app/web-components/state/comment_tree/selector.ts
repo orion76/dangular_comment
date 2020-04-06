@@ -1,7 +1,7 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
 import {adapter, ICommentNode, IStateCommentTree} from './reducer';
 import {Dictionary} from '@ngrx/entity';
-import {StateModule} from '../state.module';
+import {AppStateModule} from '../../../app-state.module';
 
 
 export namespace CommentTreeSelect {
@@ -25,7 +25,7 @@ export namespace CommentTreeSelect {
     }
   );
 
-  export const Node = createSelector<StateModule, { id: string }, Dictionary<ICommentNode>, ICommentNode>(
+  export const Node = createSelector<AppStateModule, { id: string }, Dictionary<ICommentNode>, ICommentNode>(
     Nodes,
     (nodes, props: { id: string }) => {
       // console.log('[select] - Node', {id: props.id, node: nodes[props.id]});
@@ -34,7 +34,7 @@ export namespace CommentTreeSelect {
   );
 
 
-  export const Children = createSelector<StateModule, { id: string }, ICommentNode, string[]>(
+  export const Children = createSelector<AppStateModule, { id: string }, ICommentNode, string[]>(
     Node,
     (node) => {
       return node ? [...node.children] : null;
@@ -51,7 +51,7 @@ export namespace CommentTreeSelect {
     );
   };
 
-  export const TreeIds = createSelector<StateModule, { id: string }, Dictionary<ICommentNode>, string[]>(
+  export const TreeIds = createSelector<AppStateModule, { id: string }, Dictionary<ICommentNode>, string[]>(
     Nodes,
     (nodes, props: { id: string }) => selectTreeIds(nodes, props.id)
   );

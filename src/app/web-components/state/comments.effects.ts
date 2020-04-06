@@ -4,7 +4,7 @@ import {Inject, Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {COMMENT_SERVICE, COMMENT_STATE_SERVICE, ICommentService, ICommentStateService} from '../services/types';
 import {select, Store} from '@ngrx/store';
-import {StateModule} from './state.module';
+import {AppStateModule} from '../../app-state.module';
 import {CommentsAction} from './comments/actions';
 import {filter, map, switchMap, take, tap} from 'rxjs/operators';
 import {CommentStateAction} from './comment_state/actions';
@@ -12,13 +12,14 @@ import {CommentTreeSelect} from './comment_tree/selector';
 import {ICommentNode} from './comment_tree/reducer';
 import {CommentTreeAction} from './comment_tree/actions';
 import {DATA_SERVICE, IDataService} from '@dangular-data/types';
-import {IEntityComment} from '../comment/types';
 import {Observable, of} from 'rxjs';
 import {ETypes} from '../configs/entities/types';
 import {getParentId} from '../util';
+import {IEntityComment} from '../configs/entities/comment/comment--comment';
+import {VoteStateAction} from '@dangular-components/vote/state/actions';
 
 
-function isNodeMissing(store: Store<StateModule>) {
+function isNodeMissing(store: Store<AppStateModule>) {
   return (action: CommentStateAction.Expand) => store.pipe(
     select(CommentTreeSelect.Node, {id: action.id}),
     filter((node: ICommentNode) => !node),
@@ -32,7 +33,7 @@ function mergeSets(a: Set<string>, b: Set<string>) {
   return [...b].reduce((acc, item) => acc.add(item), _a);
 }
 
-function getOrCreateNode(store: Store<StateModule>) {
+function getOrCreateNode(store: Store<AppStateModule>) {
   return (action: CommentsAction.NodeAddComments) => store.pipe(
     select(CommentTreeSelect.Node, {id: action.nodeId}),
     take(1),
@@ -54,7 +55,7 @@ function loadComments(service: ICommentService) {
   };
 }
 
-function deleteTree(store: Store<StateModule>) {
+function deleteTree(store: Store<AppStateModule>) {
   return (action: CommentStateAction.Collapse) => {
     return store.pipe(
       select(CommentTreeSelect.TreeIds, {id: action.id}),
@@ -72,7 +73,7 @@ function isExistsParentComment(data: IDataService) {
   };
 }
 
-function isExistsParentNode(value: boolean, store: Store<StateModule>) {
+function isExistsParentNode(value: boolean, store: Store<AppStateModule>) {
   return (action: CommentsAction.CommentAdd): Observable<IEntityComment> => {
     const {comment} = action;
     return store.pipe(
@@ -117,7 +118,13 @@ export class CommentsEffects {
     ofType(CommentStateAction.EActions.EXPAND),
     switchMap(isNodeMissing(this.store)),
     switchMap(loadComments(this.service)),
-    map(({id, children}) => new CommentsAction.NodeAddComments(id, children, {expanded: true}))
+    switchMap(({id, children}) => {
+      const ids = children.map((comment) => comment.id);
+      return [
+        new CommentsAction.NodeAddComments(id, children, {expanded: true}),
+        new VoteStateAction.LoadResults(ids, 'comment--comment', 'updown')
+      ];
+    })
   ));
 
   Collapse__DeleteNode$ = createEffect(() => this.actions$.pipe(
@@ -140,7 +147,7 @@ export class CommentsEffects {
 
   constructor(
     private actions$: Actions,
-    private store: Store<StateModule>,
+    private store: Store<AppStateModule>,
     @Inject(DATA_SERVICE) private data: IDataService,
     @Inject(COMMENT_SERVICE) private service: ICommentService,
     @Inject(COMMENT_STATE_SERVICE) private state: ICommentStateService,

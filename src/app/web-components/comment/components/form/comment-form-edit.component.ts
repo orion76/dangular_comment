@@ -1,22 +1,25 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {IEntityUser, IUserService, USER_SERVICE} from '../../../services/user/types';
 import {COMMENT_FORM_SERVICE, COMMENT_SERVICE, ICommentFormService, ICommentService} from '../../../services/types';
-import {IEntityComment} from '../../types';
+import {IEntityComment} from '../../../configs/entities/comment/comment--comment';
 
 
 @Component({
   selector: 'comment-form-edit',
   template: `
 
-      <comment-editor [(content)]="commentContent" class="comment-editor">
+    <comment-editor
+      [(content)]="commentContent"
+      [insert]="insert"
+      class="comment-editor">
 
-        <div class="comment-form__actions comment-form-actions" comment-actions>
-          <input type="submit" (click)="Save()" [hidden]="false" value="Save" class="comment-form-actions__button">
-          <input type="submit" (click)="Cancel()" [hidden]="false" value="Cancel" class="comment-form-actions__button">
-        </div>
+      <div class="comment-form__actions comment-form-actions" comment-actions>
+        <input type="submit" (click)="Save()" [hidden]="false" value="Save" class="comment-form-actions__button">
+        <input type="submit" (click)="Cancel()" [hidden]="false" value="Cancel" class="comment-form-actions__button">
+      </div>
 
-      </comment-editor>
+    </comment-editor>
 
   `,
   styles: [],
@@ -27,6 +30,7 @@ export class CommentFormEditComponent implements OnInit {
   openForm$: Observable<boolean>;
   loggedUser$: Observable<IEntityUser>;
   commentContent: string;
+  insert = new EventEmitter();
 
   constructor(@Inject(COMMENT_SERVICE) private service: ICommentService,
               @Inject(USER_SERVICE) private user: IUserService,

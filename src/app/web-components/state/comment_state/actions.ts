@@ -9,7 +9,7 @@ export namespace CommentStateAction {
     HIDDEN = '[COMMENT STATE] HIDDEN',
     VISIBLE = '[COMMENT STATE] VISIBLE',
     STATE_DELETE = '[COMMENT STATE] STATE_DELETE',
-    CHILDREN_LOADED = '[COMMENT STATE] CHILDREN_LOADED',
+    SET_EDITABLE = '[COMMENT STATE] SET_EDITABLE',
     CHILDREN_NOT_LOADED = '[COMMENT STATE] CHILDREN_NOT_LOADED',
   }
 
@@ -50,19 +50,13 @@ export namespace CommentStateAction {
     }
   }
 
-  export class ChildrenLoaded implements Action {
-    readonly type = EActions.CHILDREN_LOADED;
+  export class setEditable implements Action {
+    readonly type = EActions.SET_EDITABLE;
 
-    constructor(public ids: string[]) {
+    constructor(public id: string, public editable: boolean) {
     }
   }
 
-  export class ChildrenNotLoaded implements Action {
-    readonly type = EActions.CHILDREN_NOT_LOADED;
-
-    constructor(public ids: string[]) {
-    }
-  }
 
   export type TActions =
     Expand
@@ -70,7 +64,6 @@ export namespace CommentStateAction {
     | Hidden
     | Visible
     | StateDelete
-    | ChildrenLoaded
-    | ChildrenNotLoaded;
+    | setEditable;
 
 }

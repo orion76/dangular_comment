@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {IEntityComment} from './types';
+import {IEntityComment} from '../configs/entities/comment/comment--comment';
 
 
 @Component({
   selector: 'comment-view',
   template: `
-    <comment-state class="comment__state"></comment-state>
+    <comment-state [comment]="comment" class="comment__state"></comment-state>
 
-    <comment-content [content]="comment.body.value" class="comment-content comment-content__text"></comment-content>
+    <comment-content [content]="comment.body.value" textSelection="comment" class="comment-content comment-content__text"></comment-content>
 
 
   `,

@@ -1,6 +1,6 @@
 import {getIn, mergeInputAndResponse, setIn} from '@dangular-common/entity/utils';
 import {dataUser, inputUser} from '@dangular-common/entity/_testing/utils.data';
-import {configEntity as configEntityUser} from '../../../../../../web-components/configs/entities/items/user--user';
+import {configEntity as configEntityUser} from '../../../../../../web-components/configs/entities/user/user--user';
 
 describe('Entity Utils', () => {
   it('setIn устанавливает значение своства вложенного в иерархию объекта по пути(массив наименований полей)', () => {

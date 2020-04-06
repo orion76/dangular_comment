@@ -37,12 +37,12 @@ export type TRequestType = 'one' | 'list' | 'add' | 'update' | 'delete';
 
 export interface IRequestConfigSource {
   url: string;
-  types: Record<TRequestType, IRequestPointConfig>;
+  types?: Partial<Record<TRequestType, IRequestPointConfig>>;
 }
 
 export interface IRequestConfig {
   type: ETypes;
-  sources: { [K in TRequestSource]?: IRequestConfigSource },
+  sources: Partial<{ [K in TRequestSource]?: IRequestConfigSource }>,
 }
 
 export interface IRequestConfigService {

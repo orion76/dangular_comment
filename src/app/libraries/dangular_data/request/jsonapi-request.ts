@@ -43,7 +43,7 @@ export class JsonApiRequest implements IRequest {
         }
         break;
     }
-    console.log('[url]', url);
+    // console.log('[url]', url);
     return '/' + url;
   }
 

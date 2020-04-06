@@ -2,25 +2,27 @@ import {NgModule} from '@angular/core';
 import {ActionReducer, MetaReducer, StoreModule} from '@ngrx/store';
 
 import {EffectsModule} from '@ngrx/effects';
-import {IStateCommentTree , reducer as commentTreeReducer} from './comment_tree/reducer';
-import {IStateCommentState , reducer as commentStateReducer} from './comment_state/reducer';
-import {IStateComments , reducer as commentsReducer} from './comments/reducer';
+import {IStateCommentTree, reducer as commentTreeReducer} from './web-components/state/comment_tree/reducer';
+import {IStateCommentState, reducer as commentStateReducer} from './web-components/state/comment_state/reducer';
+import {IStateComments, reducer as commentsReducer} from './web-components/state/comments/reducer';
 
-import {IState as IConfigRequestState, reducer as configRequestReducer} from './configs/request/reducer';
-import {IState as IConfigEntityState, reducer as configEntityReducer} from './configs/entity/reducer';
-import {IStateCommentCommon, reducer as commentCommonReducer} from './comment_common/reducer';
-import {ConfigRequestEffects} from './configs/request/effects';
-import {ConfigEntityEffects} from './configs/entity/effects';
-import {CommentsEffects} from './comments.effects';
+import {IState as IConfigRequestState, reducer as configRequestReducer} from './web-components/state/configs/request/reducer';
+import {IState as IConfigEntityState, reducer as configEntityReducer} from './web-components/state/configs/entity/reducer';
+import {IEntityStateVote, reducer as voteReducer} from '@dangular-components/vote/state/reducer';
+import {IStateCommentCommon, reducer as commentCommonReducer} from './web-components/state/comment_common/reducer';
+import {ConfigRequestEffects} from './web-components/state/configs/request/effects';
+import {ConfigEntityEffects} from './web-components/state/configs/entity/effects';
+import {CommentsEffects} from './web-components/state/comments.effects';
 
 
-export interface StateModule {
+export interface AppStateModule {
   comments: IStateComments;
   commentTree: IStateCommentTree;
   commentState: IStateCommentState;
   configRequest: IConfigRequestState;
   configEntity: IConfigEntityState;
   commentCommon: IStateCommentCommon;
+  voteState: IEntityStateVote;
 }
 
 export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
@@ -40,13 +42,15 @@ export const metaReducers: MetaReducer<any>[] = [debug];
 
 @NgModule({
   imports: [
+
     StoreModule.forRoot({
         comments: commentsReducer,
         commentTree: commentTreeReducer,
         commentState: commentStateReducer,
         configRequest: configRequestReducer,
         configEntity: configEntityReducer,
-        commentCommon: commentCommonReducer
+        commentCommon: commentCommonReducer,
+        voteState: voteReducer
       },
       {
         // metaReducers,
