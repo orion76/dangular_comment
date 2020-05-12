@@ -2,10 +2,11 @@ import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import {AppStateModule} from '../../../app-state.module';
-import {filter, take} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 import {ConfigRequestAction} from '../../../web-components/state/configs/request/actions';
 import {ConfigRequestSelect} from '../../../web-components/state/configs/request/selector';
 import {IRequestConfig, REQUEST_CONFIGS} from '@dangular-data/request/types';
+import {notEmpty} from '@dangular-common/rxjs/operators';
 
 
 export interface IRequestConfigService {
@@ -29,7 +30,7 @@ export class RequestConfigService implements IRequestConfigService {
   get(type: string): Observable<IRequestConfig> {
     return this.store.pipe(
       select(ConfigRequestSelect.Config, {type}),
-      filter(Boolean),
+      notEmpty(),
       take(1)
 
       );

@@ -1,4 +1,4 @@
-import {IJsonApiAttributes, IJsonApiEntity, IJsonApiRelationship, IJsonApiRelationshipData} from '../types/jsonapi-response';
+import {IJsonApiAttributes, IJsonApiRelationship, IJsonApiRelationshipData} from '@dangular-data/types/jsonapi-response';
 import {IEntity} from '@dangular-common/entity/types';
 
 

@@ -1,21 +1,22 @@
 import {Action} from '@ngrx/store';
-import {ICommentNode} from './reducer';
+import {ICommentNode} from './types';
 
 export namespace CommentTreeAction {
 
   export enum EActions {
-    ADD_NODES = '[COMMENT TREE] ADD_NODE',
+    ADD_NODE = '[COMMENT TREE] ADD_NODE',
     UPDATE_NODES = '[COMMENT TREE] UPDATE_NODES',
-    DELETE_NODES = '[COMMENT TREE] DELETE_NODE',
-    ADD_CHILDREN = '[COMMENT TREE] ADD_CHILDREN',
-    DELETE_CHILDREN = '[COMMENT TREE] DELETE_CHILDREN',
-
+    DELETE_NODES = '[COMMENT TREE] DELETE_NODES',
+    CHILDREN_ADD = '[COMMENT TREE] CHILDREN_ADD',
+    CHILDREN_DELETE = '[COMMENT TREE] CHILDREN_DELETE',
+    CHILDREN_EXPAND = '[COMMENT TREE] CHILDREN_EXPAND',
+    CHILDREN_COLLAPSE = '[COMMENT TREE] CHILDREN_COLLAPSE',
   }
 
-  export class AddNodes implements Action {
-    readonly type = EActions.ADD_NODES;
+  export class AddNode implements Action {
+    readonly type = EActions.ADD_NODE;
 
-    constructor(public nodes: ICommentNode[]) {
+    constructor(public node: ICommentNode) {
     }
   }
 
@@ -33,8 +34,8 @@ export namespace CommentTreeAction {
     }
   }
 
-  export class AddChildren implements Action {
-    readonly type = EActions.ADD_CHILDREN;
+  export class ChildrenAdd implements Action {
+    readonly type = EActions.CHILDREN_ADD;
 
     constructor(public id: string, public children: string[]) {
       if (!children) {
@@ -43,21 +44,36 @@ export namespace CommentTreeAction {
     }
   }
 
-  export class DeleteChildren implements Action {
-    readonly type = EActions.DELETE_CHILDREN;
+  export class ChildrenDelete implements Action {
+    readonly type = EActions.CHILDREN_DELETE;
 
     constructor(public id: string, public children: string[]) {
     }
   }
 
+  export class ChildrenExpand implements Action {
+    readonly type = EActions.CHILDREN_EXPAND;
 
+    constructor(public node: ICommentNode) {
+    }
+  }
+
+
+  export class ChildrenCollapse implements Action {
+    readonly type = EActions.CHILDREN_COLLAPSE;
+
+    constructor(public node: ICommentNode) {
+    }
+  }
 
 
   export type TActions =
-    AddNodes
+    AddNode
     | UpdateNodes
     | DeleteNodes
-    | AddChildren
-    | DeleteChildren;
+    | ChildrenAdd
+    | ChildrenDelete
+    | ChildrenExpand
+    | ChildrenCollapse;
 
 }

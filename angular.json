@@ -30,9 +30,7 @@
             "styles": [
               "src/styles.scss",
               "node_modules/font-awesome/css/font-awesome.css",
-              "node_modules/quill/dist/quill.core.css",
-              "node_modules/quill/dist/quill.bubble.css",
-              "node_modules/quill/dist/quill.snow.css"
+              "node_modules/medium-editor/dist/css/medium-editor.css"
             ],
             "scripts": [
               {
@@ -129,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "dangular-comments"
+  "defaultProject": "dangular-comments",
+  "cli": {
+    "analytics": "93e8dbf7-a367-4f8a-a2e3-46ef591d3674"
+  }
 }

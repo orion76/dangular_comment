@@ -1,49 +1,6 @@
-import {IEntity, IEntityConfig} from './types';
-import {IJsonApiEntity} from '@dangular-common/types/jsonapi-response';
+import {IEntityConfig} from './types';
+import {IJsonApiEntity} from '@dangular-data/types/jsonapi-response';
 
-export function entityUUID(entity: IEntity) {
-  return `${entity.type}--${entity.id}`;
-}
-
-export interface IEntityConstructor {
-  new(type: string, configs: Record<string, IEntityConfig>)
-}
-
-export function createNew<T extends IEntity>(ctor: any, type: string, configs: Record<string, IEntityConfig>): T {
-  if (!configs[type]) {
-    return null;
-  }
-  return new ctor(type, configs);
-}
-
-export function entitySetValues<T>(entity: T, values: Partial<T>): T {
-  Object.keys(values)
-    .filter((key: string) => key !== 'type')
-    .forEach((key: string) => entity[key] = values[key]);
-  return entity;
-}
-
-export function createWithValues<T extends IEntity>(ctor: IEntityConstructor, type: string,
-                                                    configs: Record<string, IEntityConfig>,
-                                                    values?: Partial<T>): T {
-  const entity = createNew<T>(ctor, type, configs);
-  entitySetValues<T>(entity, values);
-  return entity;
-}
-
-export function createFromResponse<T extends IEntity>(
-  ctor: IEntityConstructor,
-  configs: Record<string, IEntityConfig>,
-  data: IJsonApiEntity,
-  included: IJsonApiEntity[]
-): T {
-  const entity: T = createNew<T>(ctor, data.type, configs);
-  if (!entity) {
-    return null;
-  }
-  entity.setResponse<T>(data, included);
-  return entity;
-}
 
 export function setIn(obj: any, path: string[], value: any) {
   const _path = [...path];
@@ -54,6 +11,14 @@ export function setIn(obj: any, path: string[], value: any) {
     }
     return next[key];
   }, obj)[last] = value;
+}
+
+export function getEntityType(full_type: string) {
+  return full_type.substring(0, full_type.indexOf('-'));
+}
+
+export function cloneObject(obj: any) {
+  return JSON.parse(JSON.stringify(obj));
 }
 
 export function getIn(path: string[], value: any) {

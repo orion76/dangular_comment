@@ -1,8 +1,7 @@
-import {IEntityConfigUser} from '../../../services/user/types';
+import {IEntityConfigUser, IEntityUser} from '../../../services/user/types';
 import {ETypes} from '../types';
 import {IRequestConfig} from '@dangular-data/request/types';
-
-
+import {Entity} from '@dangular-common/entity/entity';
 
 
 export const configRequest: IRequestConfig = {
@@ -11,8 +10,8 @@ export const configRequest: IRequestConfig = {
     default: {
       url: 'jsonapi/user/user',
       types: {
-        one: {include: ['user_picture']},
-        list: {include: ['user_picture']},
+        one: {include: []},
+        list: {include: []},
         add: {},
         update: {},
         delete: {}
@@ -21,8 +20,8 @@ export const configRequest: IRequestConfig = {
     current: {
       url: 'jsonapi/me',
       types: {
-        one: {include: ['user_picture']},
-        list: {include: ['user_picture']},
+        one: {include: []},
+        list: {include: []},
         add: {},
         update: {},
         delete: {}
@@ -31,10 +30,11 @@ export const configRequest: IRequestConfig = {
   }
 };
 
-export const configEntity: IEntityConfigUser = {
+export const configEntityUser: IEntityConfigUser = {
   type: ETypes.USER,
   attributes: {
     'display_name': {label: '', type: 'string'},
+    'avatar': {label: 'Avatar', type: 'string'},
     'drupal_internal__uid': {label: '', type: 'integer'},
     'langcode': {label: '', type: 'string'},
     'mail': {label: '', type: 'string'},
@@ -49,6 +49,11 @@ export const configEntity: IEntityConfigUser = {
   relationships: {
     roles: {label: '', type: ETypes.USER_ROLE},
     common_profiles: {label: '', type: ETypes.USER_PROFILE_COMMON},
-    user_picture: {label: '', type: ETypes.FILE, included: true}
   }
 };
+
+export class EntityUser extends Entity implements IEntityUser {
+  get config() {
+    return configEntityUser;
+  }
+}

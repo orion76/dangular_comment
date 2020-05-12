@@ -13,12 +13,12 @@ import {AppStateModule} from './app-state.module';
   imports: [
     CommonModule,
     BrowserModule,
-
+    AppStateModule,
     CommentModule,
     TranslateModule,
     TranslateModule.forRoot(translates),
     DangularCommentModule,
-    AppStateModule
+
   ],
   // bootstrap: [DangularCommentComponent]
 })

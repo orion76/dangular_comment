@@ -1,10 +1,22 @@
-@import "./assets/quill";
+@import "./assets/medium-editor";
 
-.float-panel-quote{
+.float-panel-quote {
 
   padding: .3em;
   border: 1px solid #bbb;
   border-radius: .1em
+}
+
+.comment-state {
+  &__item {
+    padding: 0 .4em;
+  }
+
+}
+
+.comment-date {
+  color: #59a;
+  font-size: .9em;
 }
 
 .comments-container {
@@ -12,32 +24,31 @@
   max-width: 40em;
 }
 
-.comment-content {
-  width: 100%;
-  display: flex;
-}
 
 .comment-form {
-  width: 100%;
-}
-
-.comment-editor {
-  display: flex;
-
+  display: block;
+  background-color: #eee;
+  border-radius: .5em;
+  padding: .5em;
   &__form {
     width: 100%
   }
 
   &__editor {
-    display: block;
-    background-color: #fff;
+    display: flex;
+    //background-color: #fff;
+  }
+
+  &__text {
+    width: 100%;
   }
 }
 
 .comment-form-reply {
-  display: block;
+  display:block;
   padding: 1em;
-  background-color: #eee
+  background-color: #fec;
+  border-radius: .5em;
 }
 
 .comment-root {
@@ -45,7 +56,7 @@
 }
 
 .comment {
-  padding: 1em 0 0 1em;
+
   display: block;
 
   &__content-block {
@@ -57,13 +68,31 @@
   }
 
   &__view {
-    width: 100%;
-    padding: .5em;
-    border: 1px solid #eee
 
   }
+}
+.comment-content {
+  display: flex;
+
+  &__text {
+    padding: .5em;
+  }
+}
+.comment-children{
+  display:block;
+  margin-left: 1em;
+}
+.comment-view {
+  width: 100%;
+  margin: .5em 0;
+  padding: .5em;
+
+  border: 1px solid #888;
+  border-radius: .5em;
+  &__content {
 
 
+  }
 }
 
 .comment-form-actions {
@@ -77,10 +106,12 @@
 }
 
 .comment-author {
-  width: 6em;
-
+  width: 4em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   &__avatar {
-    width: 4em;
+    width: 2.5em;
   }
 }
 
@@ -89,6 +120,8 @@
 }
 
 .comment-actions {
+  display: block;
+
   &__button {
     margin-left: 1.6em;
     border: none;
@@ -103,7 +136,7 @@
   }
 }
 
-.comment__state{
+.comment__state {
   display: flex;
   justify-content: flex-end;
 }

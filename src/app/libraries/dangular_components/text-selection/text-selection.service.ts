@@ -6,8 +6,8 @@ import {filter} from 'rxjs/operators';
 @Injectable({providedIn: 'root'})
 export class TextSelectionService implements ITextSelectionService {
 
-  private selectSubject= new BehaviorSubject<ISelection<any>>(null);
-  private selectEvent$= this.selectSubject.asObservable();
+  private selectSubject = new BehaviorSubject<ISelection<any>>(null);
+  private selectEvent$: Observable<ISelection<any>> = this.selectSubject.asObservable();
 
   private isActive: boolean;
   private currentElement: ElementRef;
@@ -21,7 +21,7 @@ export class TextSelectionService implements ITextSelectionService {
   }
 
   getSelection(): Observable<ISelection<any>> {
-    return this.selectEvent$.pipe(filter(Boolean));
+    return this.selectEvent$.pipe(filter((selection) => !!selection));
   }
 
   startSelect(event: MouseEvent, element: ElementRef) {

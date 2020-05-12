@@ -1,8 +1,9 @@
 import {ETypes} from '../types';
 import {IRequestConfig} from '@dangular-data/request/types';
-import {IEntity, IEntityAttributeConfig, IEntityConfig, IEntityRelationshipConfig} from '@dangular-common/entity/types';
-import {IEntityUser} from '../../../services/user/types';
+import {IEntity, IEntityAttributeConfig, IEntityBase, IEntityConfig, IEntityRelationshipConfig} from '@dangular-common/entity/types';
 import {IDataTypeLike, IFormattedBody} from '../../../comment/types';
+import {Entity} from '@dangular-common/entity/entity';
+import {IJsonApiEntity} from '@dangular-data/types/jsonapi-response';
 
 
 export const configRequest: IRequestConfig = {
@@ -11,10 +12,10 @@ export const configRequest: IRequestConfig = {
     default: {
       url: 'jsonapi/comment/comment',
       types: {
-        one: {include: ['uid', 'uid.user_picture']},
-        list: {include: ['uid', 'uid.user_picture']},
-        add: {include: ['uid', 'uid.user_picture']},
-        update: {include: ['uid', 'uid.user_picture']},
+        one: {include: ['uid']},
+        list: {include: ['uid']},
+        add: {include: ['uid']},
+        update: {include: ['uid']},
         delete: {}
       }
     }
@@ -58,18 +59,28 @@ export const configEntity: IEntityConfigComment = {
   },
 };
 
-export interface IEntityComment extends IEntity {
-  entity_type: string;
-  entity_id: IEntity;
-  field_name: string;
-  pid?: IEntityComment;
-  uid: IEntityUser;
-  subject: string;
-  body: IFormattedBody;
+export class EntityComment extends Entity implements IEntityComment {
+  constructor(jsonapi?: IJsonApiEntity) {
+    super(jsonapi);
+  }
 
-  child_count: number;
-  is_root: boolean;
-  created: string;
-  changed: string;
-  like: IDataTypeLike;
+  get config() {
+    return configEntity;
+  }
+}
+
+export interface IEntityComment extends IEntity {
+  entity_type?: string;
+  entity_id?: IEntityBase;
+  field_name?: string;
+  pid?: IEntityBase;
+  uid?: IEntityBase;
+  subject?: string;
+  body?: IFormattedBody;
+
+  child_count?: number;
+  is_root?: boolean;
+  created?: string;
+  changed?: string;
+  like?: IDataTypeLike;
 }

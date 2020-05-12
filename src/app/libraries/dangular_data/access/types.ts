@@ -1,16 +1,18 @@
 import {InjectionToken} from '@angular/core';
 import {IEntity} from '@dangular-common/entity/types';
 import {Observable} from 'rxjs';
-import {IRequest} from '@dangular-data/request/types';
+import {HttpEvent, HttpHandler, HttpRequest} from '@angular/common/http';
 
 export const ACCESS_SERVICE = new InjectionToken<IAccessService>('ACCESS_SERVICE');
 
-export interface IAccessService {
-
-  getToken(): Observable<IEntityUserToken>;
-  getRequest(): Observable<IRequest>;
-  prepareRequest(request: IRequest, token: IEntityUserToken): IRequest;
+export interface IAccessHeaders {
+  token: string
 }
+
+export interface IAccessService {
+  addToken(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>;
+}
+
 export interface IEntityUserToken extends IEntity {
   token: string,
 }

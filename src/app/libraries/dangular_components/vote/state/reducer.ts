@@ -23,7 +23,7 @@ export const adapter: EntityAdapter<IVoteState<IEntityVoteRes>> = createEntityAd
 export const initialState: IEntityStateVote = adapter.getInitialState({});
 
 
-export function reducer(state: IEntityStateVote = initialState, action: TActions) {
+export function reducerVote(state: IEntityStateVote = initialState, action: TActions) {
 
   switch (action.type) {
     case EActions.ADD_RESULT: {

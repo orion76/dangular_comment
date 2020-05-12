@@ -1,10 +1,10 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {adapter, IState} from './reducer';
+import {adapter, IStateConfigRequest} from './reducer';
 
 
 export namespace ConfigRequestSelect {
 
-  export const State = createFeatureSelector<IState>('configRequest');
+  export const State = createFeatureSelector<IStateConfigRequest>('configRequest');
 
   const {selectEntities} = adapter.getSelectors();
 

@@ -7,6 +7,7 @@ import {ENTITY_CONFIGS, IEntityConfigService} from '@dangular-data/types';
 import {ConfigEntitySelect} from '../../web-components/state/configs/entity/selector';
 import {filter, take} from 'rxjs/operators';
 import {ConfigEntityAction} from '../../web-components/state/configs/entity/actions';
+import {Dictionary} from '@ngrx/entity';
 
 
 @Injectable(
@@ -19,18 +20,19 @@ export class EntityConfigService implements IEntityConfigService {
     this.addMany(configs);
   }
 
-  getAll(): Observable<Record<string, IEntityConfig>> {
+  getAll(): Observable<Dictionary<IEntityConfig>> {
     return this.store.pipe(
       select(ConfigEntitySelect.Configs),
-      filter(Boolean),
+      filter((configs: Dictionary<IEntityConfig>) => !!configs),
       take(1)
     );
   }
 
   get(type: string): Observable<IEntityConfig> {
+    // console.log('[add] - get config');
     return this.store.pipe(
       select(ConfigEntitySelect.Config, {type}),
-      filter(Boolean),
+      filter((configs) => !!configs),
       take(1)
     );
   }

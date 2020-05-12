@@ -3,10 +3,10 @@ import {IFormattedBody} from '../comment/types';
 import {Observable} from 'rxjs';
 import {IEntityBase} from '@dangular-common/entity/types';
 import {TFormMode} from './comment-form.service';
-import {ICommentNode} from '../state/comment_tree/reducer';
-import {IStateCommentCommon as ICommonState} from '../state/comment_common/reducer';
-import {ICommentState} from '../state/comment_state/reducer';
 import {IEntityComment} from '../configs/entities/comment/comment--comment';
+import {ICommentState} from '../state/comment_state/types';
+import {ICommentNode} from '../state/comment_tree/types';
+import {IStateCommentGlobal} from '../state/comment_global';
 
 
 export const COMMENT_FORM_SERVICE = new InjectionToken<ICommentFormService>('COMMENT_FORM_SERVICE');
@@ -14,45 +14,30 @@ export const COMMENT_SERVICE = new InjectionToken<ICommentService>('COMMENT_SERV
 export const COMMENT_STATE_SERVICE = new InjectionToken<ICommentStateService>('COMMENT_STATE_SERVICE');
 
 export interface ICommentFormService {
-  onInsertOpen():Observable<string>;
+  nextId(): number;
 
-  insertToOpen(value: string)
-  setRootId(id: string, mode: TFormMode);
+  closeForms();
 
-  openCreate(id: string);
+  setRootId(rootId: number);
 
-  openEdit(id: string);
+  onFormOpen(form_id: number): Observable<boolean>;
 
-  openRootForm();
+  openForm(id: number);
 
   isOpen(): Observable<boolean>;
-
-  onOpenRoot(): Observable<boolean>;
-
-  onOpenCreate(id): Observable<boolean>;
-
-  onOpenEdit(id): Observable<boolean>;
-
 }
 
 export interface ICommentStateService {
+  createCommentState(comment:IEntityComment):ICommentState;
+  addCommentStateMany(comments: IEntityComment[]);
+
   getComment(id): Observable<IEntityComment>;
 
   getCommentState(id): Observable<ICommentState>;
 
   setEditable(id: string, editable: boolean);
 
-  nodeExpand(id: string);
-
-  nodeCollapse(id: string);
-
-  onNodeExpanded(id: string, value: boolean): Observable<ICommentNode>;
-
-  onNodeAdded(id: string): Observable<ICommentNode>;
-
-  commentState(id: string): Observable<ICommentNode>;
-
-  commonComplete(): Observable<ICommonState>;
+  onCommonComplete(): Observable<IStateCommentGlobal>;
 
   commonSetEntity(entity: IEntityBase);
 
@@ -60,19 +45,25 @@ export interface ICommentStateService {
 }
 
 export interface ICommentService {
-  loadRoot(entity_id: string): Observable<IEntityComment[]>;
+  loadComment(id: string): Observable<IEntityComment>;
 
-  saveNew(body: IFormattedBody, pid?: IEntityComment): Observable<IEntityComment>;
+  loadRoot(entity_id: string);
 
-  getChildren(parentId: string): Observable<string[]>;
+  loadChildren(parent_id: string);
 
-  loadChildren(parent_id: string): Observable<IEntityComment[]>
+  newComment(body: IFormattedBody, parent_id?: string);
+
+  loadNodeComments(node: ICommentNode): Observable<IEntityComment[]>;
+
+  saveNew(comment: IEntityComment, parent_id?: string): Observable<IEntityComment>;
+
+  getChildrenIds(parentId: string);
 
   addChildren(parentId: string, children: IEntityComment[]);
 
   //-----------
 
-  saveUpdate(commentId: string, content: string);
+  saveUpdate(comment: IEntityComment): Observable<IEntityComment>;
 
   setEntity(entity: IEntityBase);
 
@@ -82,4 +73,8 @@ export interface ICommentService {
   // getCurrentEntity(): Observable<IEntity>;
   //
   // getCurrentParent(): Observable<IEntityComment>;
+  nodeCollapse(node: ICommentNode);
+
+  nodeExpand(node: ICommentNode);
+
 }

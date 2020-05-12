@@ -70,6 +70,7 @@ export class JsonApiRequest implements IRequest {
 
   addHeader(key: string, value: string) {
     this.headers[key] = value;
+    return this;
   }
 
   defaultHeaders() {

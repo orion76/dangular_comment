@@ -13,23 +13,23 @@ export interface IUserService {
 
   hasPermission(permission: string): Observable<boolean>;
 
-  loggedUser(): Observable<IEntityUser>;
+  currentUser(): Observable<IEntityUser>;
 }
 
 export interface IEntityUser extends IEntity {
-  display_name: string,
-  langcode: string,
-  mail: string,
-  timezone: string,
-  status: boolean,
-  created: string,
-  changed: string,
-  access: string,
-  login: string,
+  display_name?: string,
+  avatar?: string,
+  langcode?: string,
+  mail?: string,
+  timezone?: string,
+  status?: boolean,
+  created?: string,
+  changed?: string,
+  access?: string,
+  login?: string,
   label: string,
-  roles: IEntity[],
-  common_profiles: IEntity[],
-  user_picture: IEntityFile
+  roles?: IEntity[],
+  common_profiles?: IEntity[],
 }
 
 export interface IEntityConfigUser extends IEntityConfig {

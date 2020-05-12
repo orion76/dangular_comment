@@ -1,7 +1,9 @@
 import {createFeatureSelector, createSelector} from '@ngrx/store';
-import {adapter, ICommentNode, IStateCommentTree} from './reducer';
+import {adapter} from './reducer';
 import {Dictionary} from '@ngrx/entity';
 import {AppStateModule} from '../../../app-state.module';
+import {ICommentNode, IStateCommentTree} from './types';
+import {DataSelect, IEntityState} from '@dangular-data/store/entities';
 
 
 export namespace CommentTreeSelect {
@@ -10,8 +12,7 @@ export namespace CommentTreeSelect {
 
   export const State = createFeatureSelector<IStateCommentTree>('commentTree');
 
-  export const Nodes = createSelector(
-    State, selectEntities);
+  export const Nodes = createSelector(State, selectEntities);
 
   export const NodesByIds = createSelector(
     Nodes,
@@ -34,12 +35,21 @@ export namespace CommentTreeSelect {
   );
 
 
-  export const Children = createSelector<AppStateModule, { id: string }, ICommentNode, string[]>(
+  export const ChildrenIds = createSelector<AppStateModule, { id: string }, ICommentNode, string[]>(
     Node,
     (node) => {
       return node ? [...node.children] : null;
     }
   );
+
+  export const Children = createSelector<AppStateModule, { id: string }, Dictionary<IEntityState>, string[], IEntityState[]>(
+    DataSelect.Entities,
+    ChildrenIds,
+    (entities, ids) => {
+      return ids ? ids.map((id) => entities[id]) : null;
+    }
+  );
+
 
   const selectTreeIds = (nodes: Dictionary<ICommentNode>, parentId: string): string[] => {
     if (!nodes[parentId]) {

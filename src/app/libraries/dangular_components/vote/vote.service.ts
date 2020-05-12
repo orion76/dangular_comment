@@ -1,9 +1,9 @@
 import {Inject, Injectable} from '@angular/core';
-import {DATA_SERVICE, IDataService} from '@dangular-data/types';
-import {IEntityVote, IEntityVoteRes, IVoteService, UVoteType} from '@dangular-components/vote/types';
+import {ENTITIES_SERVICE, IEntitiesService} from '@dangular-data/types';
+import {IEntityVote, IEntityVoteRes, IVoteService} from '@dangular-components/vote/types';
 import {select, Store} from '@ngrx/store';
 import {AppStateModule} from '../../../app-state.module';
-import {switchMap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
 import {VoteStateSelect} from '@dangular-components/vote/state/selector';
@@ -14,7 +14,7 @@ import {TVoteState} from '@dangular-components/vote/state/reducer';
 @Injectable({providedIn: 'root'})
 export class VoteService implements IVoteService {
 
-  constructor(@Inject(DATA_SERVICE) private data: IDataService,
+  constructor(@Inject(ENTITIES_SERVICE) private entities: IEntitiesService,
               private store: Store<AppStateModule>) {
   }
 
@@ -26,21 +26,23 @@ export class VoteService implements IVoteService {
     return this.store.pipe(select(VoteStateSelect.Like, {id: entity_id}));
   }
 
-  add<T extends IEntityVote>(type: UVoteType, values: Partial<T>): Observable<T> {
-    const entity_type = `vote--${type}`;
-    return this.data.createWithValues<T>(entity_type, values).pipe(
-      switchMap((entity) => this.data.add(entity))
-    );
-  }
+  // add<T extends IEntityVote>(type: UVoteType, values: Partial<T>): Observable<T> {
+  //   const entity_type = `vote--${type}`;
+  //   return this.entities.saveNew(entity_type, values).pipe(
+  //     map((entity: T) => entity)
+  //   );
+  // }
 
   loadResults(entity_type: string, ids: string[]): Observable<IEntityVoteRes[]> {
     const filter: IFilters = {
       filters: [{field: 'entity_id', value: ids}]
     };
-    return this.data.list(entity_type, {filter});
+    return this.entities.loadMany(entity_type, {filter}).pipe(
+      map((entities: IEntityVoteRes[]) => entities)
+    );
   }
 
   update<T extends IEntityVote>(entity: T): Observable<T> {
-    return this.data.update(entity);
+    return this.entities.saveUpdate(entity.type, entity.id, entity.getJsonApiDoc());
   }
 }

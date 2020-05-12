@@ -3,15 +3,12 @@ import {Inject, Injectable} from '@angular/core';
 
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Store} from '@ngrx/store';
-import {DATA_SERVICE, IDataService} from '@dangular-data/types';
 import {IEntityVoteRes, IVoteService, VOTE_SERVICE} from '@dangular-components/vote/types';
 import {AppStateModule} from '../../../../app-state.module';
 import {VoteStateAction} from '@dangular-components/vote/state/actions';
 import {IUserService, USER_SERVICE} from '../../../../web-components/services/user/types';
-import {map, switchMap, withLatestFrom} from 'rxjs/operators';
-import {IEntity} from '@dangular-common/entity/types';
-import {CommentStateAction} from '../../../../web-components/state/comment_state/actions';
-import {IVoteState, TVoteState} from '@dangular-components/vote/state/reducer';
+import {map, switchMap} from 'rxjs/operators';
+import {TVoteState} from '@dangular-components/vote/state/reducer';
 
 
 @Injectable()

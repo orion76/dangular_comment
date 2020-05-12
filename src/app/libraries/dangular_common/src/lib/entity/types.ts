@@ -1,4 +1,4 @@
-import {IJsonApiEntity} from '@dangular-common/types/jsonapi-response';
+import {IJsonApiEntity, IJsonApiEntityDoc} from '@dangular-data/types/jsonapi-response';
 
 export interface IEntityBase {
   id: string;
@@ -12,9 +12,11 @@ export interface IEntity extends IEntityBase {
 
   isChanged(): boolean;
 
-  setResponse<T extends IEntity>(data: IJsonApiEntity, includes: IJsonApiEntity[]);
+  setJsonApi<T extends IEntity>(data: IJsonApiEntity);
 
-  toJsonApi(): IJsonApiEntity;
+  getJsonApiEntity(): IJsonApiEntity;
+  getJsonApiDoc(): IJsonApiEntityDoc;
+  getJsonApiIncluded(): IJsonApiEntity[];
 }
 
 export type TEntityFieldType = 'string' | 'integer' | 'text' | 'boolean' | 'datetime' | 'object';
@@ -34,7 +36,7 @@ export interface IEntityRelationshipConfig extends IEntityFieldConfig {
 
 export interface IEntityConfig {
   type: string;
-  attributes: Record<string, IEntityAttributeConfig>;
+  attributes?: Record<string, IEntityAttributeConfig>;
   relationships?: Record<string, IEntityRelationshipConfig>;
 }
 

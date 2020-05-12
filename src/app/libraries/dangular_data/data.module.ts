@@ -1,5 +1,5 @@
-import {ModuleWithProviders, NgModule} from '@angular/core';
-import {DATA_SERVICE, ENTITY_CONFIG_SERVICE, ENTITY_CONFIGS, TRANSPORT_SERVICE} from './types';
+import {ModuleWithProviders, NgModule, Type} from '@angular/core';
+import {DATA_SERVICE, ENTITIES_SERVICE, ENTITY_CONFIG_SERVICE, ENTITY_CONFIGS, TRANSPORT_SERVICE} from './types';
 import {TransportService} from './transport.service';
 import {RequestService} from './request/request.service';
 import {IEntityConfig} from '@dangular-common/entity/types';
@@ -9,6 +9,8 @@ import {EntityConfigService} from './entity-config.service';
 import {IRequestConfig, REQUEST_CONFIG_SERVICE, REQUEST_CONFIGS, REQUEST_SERVICE} from '@dangular-data/request/types';
 import {ACCESS_SERVICE} from '@dangular-data/access/types';
 import {AccessService} from '@dangular-data/access/access.service';
+import {EntitiesService} from '@dangular-data/entities.service';
+import {HTTP_INTERCEPTORS, HttpInterceptor} from '@angular/common/http';
 
 
 @NgModule({
@@ -25,6 +27,7 @@ export class DataModule {
         {provide: TRANSPORT_SERVICE, useClass: TransportService},
         {provide: ACCESS_SERVICE, useClass: AccessService},
         {provide: DATA_SERVICE, useClass: DataService},
+        {provide: ENTITIES_SERVICE, useClass: EntitiesService},
       ]
     };
   }
@@ -45,5 +48,12 @@ export class DataModule {
     };
   }
 
+  static forInterceptor(interceptor: Type<HttpInterceptor>): ModuleWithProviders<DataModule> {
+    return {
+      ngModule: DataModule, providers: [
+        {provide: HTTP_INTERCEPTORS, useClass: interceptor, multi: true},
+      ]
+    };
+  }
 
 }

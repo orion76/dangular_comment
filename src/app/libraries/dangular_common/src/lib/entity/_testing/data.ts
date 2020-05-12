@@ -1,6 +1,6 @@
 import {IEntity, IEntityConfig} from '../types';
 import {ETypes} from '../../../../../../web-components/configs/entities/types';
-import {IJsonApiEntity, IJsonApiResponse} from '@dangular-common/types/jsonapi-response';
+import {IJsonApiEntity, IJsonApiEntityDoc} from '@dangular-data/types/jsonapi-response';
 
 export interface IEntityTest extends IEntity {
   label: string;
@@ -35,7 +35,7 @@ export const data: IJsonApiEntity = {
   }
 };
 
-export const response: IJsonApiResponse = {
+export const response: IJsonApiEntityDoc = {
   data: [data],
   included: []
 };

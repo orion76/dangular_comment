@@ -1,0 +1,122 @@
+$background-color: #fff;
+$font-color: #555;
+$gradient-color: rgba(220, 220, 220, 0.75);
+$border-dark: #aaa;
+
+.editor {
+  &__toolbar {
+border-radius: 2px 2px 0 0;
+  }
+
+  &__textarea {
+    border: 1px solid $border-dark;
+    border-top:none;
+    padding: .5em;
+    background-color: #fff;
+  }
+}
+
+.editor-toolbar {
+  border: 1px solid #c8c8c8;
+  background-color: #f4f4f4;
+  box-sizing: border-box;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  padding: 2px;
+  &__button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    height: 24px;
+    padding: 3px 5px;
+    width: 28px;
+
+  }
+
+  &__button:hover,
+  &__button-active
+  {
+    color: #007ad9;
+    font-weight: bold;
+  }
+
+}
+
+
+.medium-toolbar-arrow-under:after {
+  border-color: $background-color;
+  top: 50px;
+}
+
+.medium-toolbar-arrow-over:before {
+  border-color: $background-color;
+  top: -8px;
+}
+
+.toolbar-wrapper {
+
+  .medium-editor-toolbar {
+    position: relative;
+    visibility: visible;
+    background-color: $background-color;
+    background: -webkit-linear-gradient(top, $background-color, $gradient-color);
+    background: linear-gradient(to bottom, $background-color, $gradient-color);
+    border: 1px solid $border-dark;
+    border-bottom: none;
+
+    li button {
+      background-color: $background-color;
+      border: 0;
+      border-right: 1px solid $border-dark;
+      line-height: .2em;
+      padding: 0;
+      color: $font-color;
+      height: 2.2em;
+      min-width: 2.2em;
+      -webkit-transition: background-color .2s ease-in;
+      transition: background-color .2s ease-in;
+
+      &:hover {
+        color: #59f;
+      }
+    }
+
+    li .medium-editor-button-active {
+      color: #59f;
+    }
+  }
+}
+
+.medium-editor-toolbar-form {
+  background: $background-color;
+  border-radius: 5px;
+  color: #999;
+
+  .medium-editor-toolbar-input {
+    background: $background-color;
+    box-sizing: border-box;
+    color: #ccc;
+    height: 50px;
+  }
+
+  a {
+    color: #fff;
+  }
+}
+
+.medium-editor-toolbar-anchor-preview {
+  background: $background-color;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.medium-editor-placeholder:after {
+  color: #b3b3b1;
+}
+
+
+blockquote {
+  padding: 1em;
+  border-left: 3px solid #aaa;
+  margin: .4em;
+}

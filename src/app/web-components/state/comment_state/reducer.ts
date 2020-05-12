@@ -1,63 +1,51 @@
 import {CommentStateAction} from './actions';
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+import {createEntityAdapter, EntityAdapter, Update} from '@ngrx/entity';
+import {ICommentState, IStateCommentState} from './types';
 import TActions = CommentStateAction.TActions;
 import EActions = CommentStateAction.EActions;
 
-export interface ICommentStates {
-  editable?: boolean;
-  expanded?: boolean;
-  hidden?: boolean;
-}
-
-
-export interface ICommentState extends ICommentStates {
-  id: string;
-}
-
-export interface IStateCommentState extends EntityState<ICommentState> {
-}
 
 export const adapter: EntityAdapter<ICommentState> = createEntityAdapter<ICommentState>({
   selectId: (item) => item.id,
 });
 
-export const initialState: IStateCommentState = adapter.getInitialState({});
+export const initialState: IStateCommentState = adapter.getInitialState({
+  uid: null,
+  entity: null,
+  field_name: null
+});
 
 
-function createUpdates<K extends keyof ICommentState>(ids: string[],
-                                                      field: K,
-                                                      value: ICommentState[K],
-                                                      state: IStateCommentState
-): ICommentState[] {
+function createUpdatesOneValue<K extends keyof ICommentState>(ids: string[], field: K, value: ICommentState[K]): ICommentState[] {
+  return ids.map((id) => ({id, [field]: value}));
+}
 
-  return ids.map((id) => {
-    const item: ICommentState = state[id] || {id};
-    return {...item, [field]: value};
-  });
+function createUpdates(values: Partial<ICommentState>[]): Update<ICommentState>[] {
+  return values.map((item) => ({id: item.id, changes: item}));
 }
 
 
-export function reducer(state: IStateCommentState = initialState, action: TActions) {
+export function reducerCommentState(state: IStateCommentState = initialState, action: TActions) {
 
   switch (action.type) {
-    case EActions.EXPAND: {
-      const {id} = action;
-      state = adapter.upsertMany(createUpdates([id], 'expanded', true, state), state);
+    case EActions.STATE_INIT_MANY: {
+      const {comments} = action;
+      state = adapter.addMany(comments, state);
       break;
     }
-    case EActions.COLLAPSE: {
-      const {id} = action;
-      state = adapter.upsertMany(createUpdates([id], 'expanded', false, state), state);
-      break;
-    }
-    case EActions.HIDDEN: {
+    case EActions.SET_CAN_REPLY: {
       const {ids} = action;
-      state = adapter.upsertMany(createUpdates(ids, 'hidden', true, state), state);
+      state = adapter.upsertMany(createUpdatesOneValue(ids, 'can_reply', true), state);
       break;
     }
-    case EActions.VISIBLE: {
-      const {ids} = action;
-      state = adapter.upsertMany(createUpdates(ids, 'hidden', false, state), state);
+    case EActions.SET_EXPANDED: {
+      const {ids, value} = action;
+      state = adapter.upsertMany(createUpdatesOneValue(ids, 'expanded', value), state);
+      break;
+    }
+    case EActions.SET_CHILD_COUNT: {
+      const {values} = action;
+      state = adapter.updateMany(createUpdates(values), state);
       break;
     }
     case EActions.STATE_DELETE: {
@@ -70,9 +58,6 @@ export function reducer(state: IStateCommentState = initialState, action: TActio
       state = adapter.upsertOne({id, editable}, state);
       break;
     }
-
-    default:
-      state = {...state};
   }
 
   return state;

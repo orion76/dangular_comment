@@ -53,13 +53,13 @@ function ArrayToString(arr: string | string[], delimiter: string): string {
 
 /*
 * http://localhost:4200/jsonapi/comment/comment?
-*   include=uid,uid.user_picture
+*   include=uid
 *   &filter[entity_id.id]=89c0e307-4942-48de-930e-fdba1ca7f5ae
 *   &filter[pid-id][condition][path]=pid,id
 *   &filter[pid-id][condition][value]=undefined
 *   &filter[pid-id][condition][operator]=IS%20NULL
 *
-* http://localhost:4200/jsonapi/comment/comment?include=uid,uid.user_picture&filter%5Bentity_id.id%5D=89c0e307-4942-48de-930e-fdba1ca7f5ae
+* http://localhost:4200/jsonapi/comment/comment?include=uid&filter%5Bentity_id.id%5D=89c0e307-4942-48de-930e-fdba1ca7f5ae
 * */
 
 export function addCondition(params: Record<string, string>, condition: ICondition) {

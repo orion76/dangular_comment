@@ -3,7 +3,8 @@ import { ITransportService} from './types';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {IRequest} from '@dangular-data/request/types';
-import {IJsonApiResponse} from '@dangular-common/types/jsonapi-response';
+import {IJsonApiEntityDoc} from '@dangular-data/types/jsonapi-response';
+import {log} from '@dangular-common/rxjs/operators';
 
 @Injectable(
   {providedIn: 'root'}
@@ -14,7 +15,7 @@ export class TransportService implements ITransportService {
   }
 
 
-  request(request: IRequest): Observable<IJsonApiResponse | IJsonApiResponse[]> {
+  request(request: IRequest): Observable<IJsonApiEntityDoc> {
     let response;
     switch (request.type) {
       case 'one':
@@ -33,6 +34,6 @@ export class TransportService implements ITransportService {
         response = this.http.delete(request.url);
         break;
     }
-    return response;
+    return response.pipe();
   }
 }

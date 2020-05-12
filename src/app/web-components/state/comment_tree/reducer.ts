@@ -1,16 +1,9 @@
 import {CommentTreeAction} from './actions';
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 import {Update} from '@ngrx/entity/src/models';
+import {ICommentNode, IStateCommentTree} from './types';
 import TActions = CommentTreeAction.TActions;
 import EActions = CommentTreeAction.EActions;
-
-export interface ICommentNode {
-  id: string;
-  children?: Set<string>;
-}
-
-export interface IStateCommentTree extends EntityState<ICommentNode> {
-}
 
 export const adapter: EntityAdapter<ICommentNode> = createEntityAdapter<ICommentNode>({
   selectId: (item) => item.id,
@@ -35,12 +28,12 @@ function createUpdates(nodes: ICommentNode[]): Update<ICommentNode>[] {
   return nodes.map((changes: ICommentNode) => ({id: changes.id, changes}));
 }
 
-export function reducer(state: IStateCommentTree = initialState, action: TActions) {
+export function reducerCommentTree(state: IStateCommentTree = initialState, action: TActions) {
 
   switch (action.type) {
-    case EActions.ADD_NODES: {
-      const {nodes} = action;
-      state = adapter.upsertMany(nodes, state);
+    case EActions.ADD_NODE: {
+      const {node} = action;
+      state = adapter.upsertOne(node, state);
       break;
     }
     case EActions.UPDATE_NODES: {
@@ -53,25 +46,36 @@ export function reducer(state: IStateCommentTree = initialState, action: TAction
       state = adapter.removeMany(ids, state);
       break;
     }
-    case EActions.ADD_CHILDREN: {
+    case EActions.CHILDREN_ADD: {
       const {id, children} = action;
-      const node = {...state.entities[id]};
-      const children_exists = getChildren(node);
-      children.forEach((child: string) => children_exists.add(child));
-
-      node.children=new Set(children_exists);
-
-      state = adapter.addOne(node, adapter.removeOne(node.id,state));
+      let node: ICommentNode;
+      if (!state.entities[id]) {
+        node = {id, children: new Set(children)};
+      } else {
+        node = {...state.entities[id]};
+        const children_exists = getChildren(node);
+        children.forEach((child: string) => children_exists.add(child));
+        node.children = new Set(children_exists);
+      }
+      state = adapter.upsertOne(node, adapter.removeOne(node.id, state));
       break;
     }
-    case EActions.DELETE_CHILDREN: {
+    case EActions.CHILDREN_DELETE: {
       const {id, children} = action;
       state = deleteChildren(id, children, state);
       break;
     }
 
-    default:
-      state = {...state};
+    case EActions.CHILDREN_EXPAND: {
+      const {id} = action.node;
+      state = adapter.updateOne({id, changes: {expanded: true}}, state);
+      break;
+    }
+    case EActions.CHILDREN_COLLAPSE: {
+      const {id} = action.node;
+      state = adapter.updateOne({id, changes: {expanded: false}}, state);
+      break;
+    }
   }
 
   return state;

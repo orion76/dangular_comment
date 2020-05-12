@@ -12,7 +12,7 @@ export const configRequest: IRequestConfig = {
       types: {
         one: {},
         list: {
-          include: ['user_picture', 'roles'],
+          include: [ 'roles'],
           filter: {
             filters: [{field: 'config_field', value: 'config_value'}],
             conditions: [{path: 'path_config', value: 'value_config', operator: EConditionOperator.EQUAL}]
@@ -27,8 +27,8 @@ export const configRequest: IRequestConfig = {
     current: {
       url: 'jsonapi/me',
       types: {
-        one: {include: ['user_picture']},
-        list: {include: ['user_picture']},
+        one: {include: []},
+        list: {include: []},
         add: {},
         update: {},
         delete: {}

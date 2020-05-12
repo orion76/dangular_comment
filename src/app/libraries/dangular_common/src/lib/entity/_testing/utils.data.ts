@@ -1,5 +1,5 @@
 import {ETypes} from '../../../../../../web-components/configs/entities/types';
-import {IJsonApiEntity} from '@dangular-common/types/jsonapi-response';
+import {IJsonApiEntity} from '@dangular-data/types/jsonapi-response';
 
 export const inputUser: Partial<IJsonApiEntity> = {
   'attributes': {
@@ -53,18 +53,6 @@ export const dataUser: IJsonApiEntity = {
         'id': 'f8a80abc-6af8-427c-bd3e-b9d822a8d8b7'
       },
     },
-    'user_picture': {
-      'data': {
-        'type': ETypes.FILE,
-        'id': '912785bb-6155-45c9-a2a8-e1d16f3641a8',
-        'meta': {
-          'alt': '',
-          'title': '',
-          'width': 200,
-          'height': 193
-        }
-      },
-    }
   }
 };
 
@@ -146,26 +134,7 @@ export const jsonApiResponse = {
             }
           }
         },
-        'user_picture': {
-          'data': {
-            'type': 'file--file',
-            'id': '912785bb-6155-45c9-a2a8-e1d16f3641a8',
-            'meta': {
-              'alt': '',
-              'title': '',
-              'width': 200,
-              'height': 193
-            }
-          },
-          'links': {
-            'related': {
-              'href': 'http://sdd.ti-work.ru/jsonapi/user/user/9fd903ae-f6df-4f49-89d1-e07786434ff1/user_picture'
-            },
-            'self': {
-              'href': 'http://sdd.ti-work.ru/jsonapi/user/user/9fd903ae-f6df-4f49-89d1-e07786434ff1/relationships/user_picture'
-            }
-          }
-        }
+
       }
     }
   ],

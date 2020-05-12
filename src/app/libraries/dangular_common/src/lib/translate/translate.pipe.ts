@@ -12,7 +12,7 @@ export class TranslatePipe implements PipeTransform {
   }
 
   transform(value: string): string {
-    return this.service.translate(value);
+    return value ? this.service.translate(value) : null;
   }
 }
 

@@ -5,18 +5,13 @@ import {CommentFormService} from '../services/comment-form.service';
 
 import {CommentService} from '../services/comment.service';
 import {EntitiesConfigModule} from '../configs/entities/module';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommentStateService} from '../services/comment-state.service';
 import {CommentComponent} from './comment.component';
-import {CommentAuthorComponent} from './components/comment-author.component';
-import {CommentStateComponent} from './components/comment-state.component';
-import {CommentContentComponent} from './components/comment-content.component';
-import {CommentFormEditComponent} from './components/form/comment-form-edit.component';
-import {CommentFormReplyComponent} from './components/form/comment-form-reply.component';
-import {CommentActionsComponent} from './components/comment-actions.component';
-import {CommentEditorComponent} from './comment-editor.component';
-import {CommentViewComponent} from './comment-view.component';
-import {CommentListComponent} from './comment-list.component';
+import {CommentAuthorComponent} from './common/comment-author.component';
+import {CommentFormComponent} from './form/comment-form.component';
+
+import {CommentListComponent} from './list/comment-list.component';
 import {HttpClientModule} from '@angular/common/http';
 import {DataModule} from '@dangular-data/data.module';
 import {UserModule} from '../services/user/user.module';
@@ -24,7 +19,14 @@ import {TranslateModule} from '@dangular-common/translate/translate.pipe';
 import {TimerModule} from '@dangular-components/timer/timer.component';
 import {VoteUpDownModule} from '@dangular-components/vote/vote.module';
 import {TextSelectionModule} from '@dangular-components/text-selection/module';
-import {AceModule} from 'ngx-ace-wrapper';
+
+
+import {MediumEditorModule} from 'angular2-medium-editor';
+import {EditorModule} from '@dangular-components/editor/editor.component';
+import {AccessService} from '@dangular-data/access/access.service';
+
+import {CommentViewModule} from './view/comment-view.module';
+import {CommentActionsModule} from './comment-actions.component';
 
 
 @NgModule({
@@ -32,38 +34,29 @@ import {AceModule} from 'ngx-ace-wrapper';
     CommonModule,
     HttpClientModule,
     DataModule.forRoot(),
+    DataModule.forInterceptor(AccessService),
     UserModule,
     EntitiesConfigModule,
     FormsModule,
     TranslateModule,
-    TimerModule,
     VoteUpDownModule,
     TextSelectionModule,
-    AceModule,
-
+    MediumEditorModule,
+    EditorModule,
+    CommentActionsModule,
+    CommentViewModule,
+    ReactiveFormsModule
   ],
   exports: [
     CommentComponent,
     CommentAuthorComponent,
-    CommentStateComponent,
-    CommentContentComponent,
-    CommentActionsComponent,
-    CommentFormReplyComponent,
-    CommentFormEditComponent,
-    CommentEditorComponent,
-    CommentViewComponent,
+    CommentFormComponent,
     CommentListComponent,
   ],
   declarations: [
     CommentComponent,
     CommentAuthorComponent,
-    CommentStateComponent,
-    CommentContentComponent,
-    CommentActionsComponent,
-    CommentFormReplyComponent,
-    CommentFormEditComponent,
-    CommentEditorComponent,
-    CommentViewComponent,
+    CommentFormComponent,
     CommentListComponent,
   ],
   providers: [

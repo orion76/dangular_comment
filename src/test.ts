@@ -15,6 +15,6 @@ getTestBed().initTestEnvironment(
   platformBrowserDynamicTesting()
 );
 // Then we find all the tests.
-const context = require.context('./app/libraries/dangular_data/request/_testing', true, /\.spec\.ts$/);
+const context = require.context('./app/libraries/dangular_common/src/lib/entity/_testing', true, /\.spec\.ts$/);
 // And load the modules.
 context.keys().map(context);

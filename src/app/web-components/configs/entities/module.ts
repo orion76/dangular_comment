@@ -3,7 +3,7 @@ import {DataModule} from '@dangular-data/data.module';
 
 import {IEntityConfig} from '@dangular-common/entity/types';
 import {configRequest as requestNodeArticle, configEntity as entityNodeArticle} from './node/node--article';
-import {configRequest as requestUser, configEntity as entityUser} from './user/user--user';
+import {configRequest as requestUser, configEntityUser as entityUser} from './user/user--user';
 import { configEntity as entityUserRole} from './user/user_role--user_role';
 import {configRequest as requestUserToken, configEntity as entityUserToken} from './user/user--token';
 import {configRequest as requestComment, configEntity as entityComment} from './comment/comment--comment';

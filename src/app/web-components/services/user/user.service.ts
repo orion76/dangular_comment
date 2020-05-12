@@ -1,27 +1,28 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {IEntityUser, IUserService} from './types';
-import {DATA_SERVICE, IDataService} from '@dangular-data/types';
+import {ENTITIES_SERVICE, IEntitiesService} from '@dangular-data/types';
 import {ETypes} from '../../configs/entities/types';
-import {filter, map, share, take, tap} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {AppStateModule} from '../../../app-state.module';
-import {CommentCommonAction} from '../../state/comment_common/actions';
-import {CommentCommonSelect} from '../../state/comment_common/selector';
+import {CommentGlobalAction, CommentGlobalSelect} from '../../state/comment_global';
+import {createEntityOfJsonapiOne, notEmpty} from '@dangular-common/rxjs/operators';
+import {EntityUser} from '../../configs/entities/user/user--user';
 
 @Injectable()
 export class UserService implements IUserService {
   private _loggedUser$: Observable<IEntityUser>;
   private permissions = [];
 
-  constructor(@Inject(DATA_SERVICE) private data: IDataService,
+  constructor(@Inject(ENTITIES_SERVICE) private entities: IEntitiesService,
               private store: Store<AppStateModule>
   ) {
   }
 
   hasPermission(permission: string): Observable<boolean> {
     if (!this.permissions[permission]) {
-      this.permissions[permission] = this.loggedUser().pipe(
+      this.permissions[permission] = this.currentUser().pipe(
         map((user) => !!user.roles),
       );
     }
@@ -29,25 +30,26 @@ export class UserService implements IUserService {
   }
 
   init() {
-    this.data.one<IEntityUser>(ETypes.USER, {source: 'current'})
+    this.entities.loadOne(ETypes.USER, {source: 'current'})
       .pipe(take(1))
       .subscribe((user) => {
         this.setUser(user);
       });
   }
 
-  loggedUser(): Observable<IEntityUser> {
+  currentUser(): Observable<IEntityUser> {
     if (!this._loggedUser$) {
       this._loggedUser$ = this.store.pipe(
-        select(CommentCommonSelect.LoggedUser),
-        filter(Boolean),
+        select(CommentGlobalSelect.CurrentUser),
+        notEmpty(),
+        createEntityOfJsonapiOne(EntityUser)
       );
     }
     return this._loggedUser$;
   }
 
   setUser(user: IEntityUser) {
-    this.store.dispatch(new CommentCommonAction.SetUser(user));
+    this.store.dispatch(new CommentGlobalAction.SetCurrentUser(user));
   }
 
 

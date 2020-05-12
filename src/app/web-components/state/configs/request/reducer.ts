@@ -6,7 +6,7 @@ import EActions = ConfigRequestAction.EActions;
 import {IRequestConfig} from '@dangular-data/request/types';
 
 
-export interface IState extends EntityState<IRequestConfig> {
+export interface IStateConfigRequest extends EntityState<IRequestConfig> {
   entityId: string
 }
 
@@ -14,10 +14,10 @@ export const adapter: EntityAdapter<IRequestConfig> = createEntityAdapter<IReque
   selectId: (config) => config.type,
 });
 
-export const initialState: IState = adapter.getInitialState({entityId: null});
+export const initialState: IStateConfigRequest = adapter.getInitialState({entityId: null});
 
 
-export function reducer(state: IState = initialState, action: TActions) {
+export function reducerConfigRequest(state: IStateConfigRequest = initialState, action: TActions) {
 
   switch (action.type) {
     case EActions.ADD: {

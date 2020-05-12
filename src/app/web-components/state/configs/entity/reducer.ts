@@ -5,7 +5,7 @@ import TActions = ConfigEntityAction.TActions;
 import EActions = ConfigEntityAction.EActions;
 
 
-export interface IState extends EntityState<IEntityConfig> {
+export interface IStateConfigEntity extends EntityState<IEntityConfig> {
   entityId: string
 }
 
@@ -13,10 +13,10 @@ export const adapter: EntityAdapter<IEntityConfig> = createEntityAdapter<IEntity
   selectId: (config) => config.type,
 });
 
-export const initialState: IState = adapter.getInitialState({entityId: null});
+export const initialState: IStateConfigEntity = adapter.getInitialState({entityId: null});
 
 
-export function reducer(state: IState = initialState, action: TActions) {
+export function reducerConfigEntity(state: IStateConfigEntity = initialState, action: TActions) {
 
   switch (action.type) {
     case EActions.ADD: {

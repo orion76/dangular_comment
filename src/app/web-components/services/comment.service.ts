@@ -1,72 +1,26 @@
 import {Inject, Injectable} from '@angular/core';
 import {COMMENT_STATE_SERVICE, ICommentService, ICommentStateService} from './types';
-import {DATA_SERVICE, IDataService} from '@dangular-data/types';
+import {ENTITIES_SERVICE, IEntitiesService} from '@dangular-data/types';
 import {IFormattedBody} from '../comment/types';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {IEntityBase} from '@dangular-common/entity/types';
 import {select, Store} from '@ngrx/store';
 import {AppStateModule} from '../../app-state.module';
-import {filter, map, switchMap, take, tap} from 'rxjs/operators';
-import {CommentsAction} from '../state/comments/actions';
-import {CommentsSelect} from '../state/comments/selector';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {ETypes} from '../configs/entities/types';
 import {IFilters} from '@dangular-data/request/request.service';
-import {CommentTreeAction} from '../state/comment_tree/actions';
-import {IStateCommentCommon} from '../state/comment_common/reducer';
-import {CommentTreeSelect} from '../state/comment_tree/selector';
-import {ICommentNode} from '../state/comment_tree/reducer';
-import {IEntityComment} from '../configs/entities/comment/comment--comment';
+import {ICommentNode, CommentTreeSelect, CommentTreeAction} from '../state/comment_tree';
+import {EntityComment, IEntityComment} from '../configs/entities/comment/comment--comment';
+import {createEntityOfJsonapiMany, createEntityOfJsonapiOne} from '@dangular-common/rxjs/operators';
+import {getEntityType} from '@dangular-common/entity/utils';
+import {IJsonApiEntity} from '@dangular-data/types/jsonapi-response';
 
-function EntityTypeWithoutBundle(entity_type: string): string {
-  return entity_type.split('--')[0];
-}
-
-function getCommentParentId(comment: IEntityComment) {
-  return comment.pid ? comment.pid.id : comment.entity_id.id;
-}
-
-function createCommentData(body: IFormattedBody, pid: IEntityComment) {
-  return (commonValues: IStateCommentCommon) => {
-    const {entity, uid, field_name} = commonValues;
-    const values = {
-      field_name,
-      uid,
-      entity_type: EntityTypeWithoutBundle(entity.type),
-      entity_id: entity,
-      body
-    } as Partial<IEntityComment>;
-
-    if (pid) {
-      values.pid = pid;
-    }
-    return values;
-  };
-
-}
-
-function isSetEqual(a: Set<string>, b: Set<string>) {
-  const _a = new Set(a);
-  const _b = new Set(b);
-  [...a].forEach((item) => {
-    if (b.has(item)) {
-      _b.delete(item);
-      _a.delete(item);
-    }
-  });
-
-  return !_a.size && !_b.size;
-}
-
-function isChildrenUpdates(node_old: ICommentNode, node_new: ICommentNode) {
-
-}
 
 @Injectable()
 export class CommentService implements ICommentService {
 
-
   constructor(
-    @Inject(DATA_SERVICE) private data: IDataService,
+    @Inject(ENTITIES_SERVICE) private entities: IEntitiesService,
     @Inject(COMMENT_STATE_SERVICE) private state: ICommentStateService,
     private store: Store<AppStateModule>
   ) {
@@ -89,14 +43,20 @@ export class CommentService implements ICommentService {
     };
   }
 
-  loadRoot(entity_id: string): Observable<IEntityComment[]> {
-    // console.log('[LOAD] - root', {entity_id});
-    return this.data.list(ETypes.COMMENT, {filter: this.createFiltersRoot(entity_id)});
+  loadNodeComments(node: ICommentNode): Observable<IEntityComment[]> {
+    const {id, isRoot} = node;
+    const load$: Observable<IJsonApiEntity[]> = isRoot ? this.loadRoot(id) : this.loadChildren(id);
+    return load$.pipe(
+      createEntityOfJsonapiMany(EntityComment),
+    );
   }
 
-  loadChildren(parent_id: string): Observable<IEntityComment[]> {
-    // console.log('[LOAD] - children', {parent_id});
-    return this.data.list<IEntityComment>(ETypes.COMMENT, {filter: this.createFilters(parent_id)});
+  loadRoot(entity_id: string): Observable<IJsonApiEntity[]> {
+    return this.entities.loadMany(ETypes.COMMENT, {filter: this.createFiltersRoot(entity_id)});
+  }
+
+  loadChildren(parent_id: string): Observable<IJsonApiEntity[]> {
+    return this.entities.loadMany(ETypes.COMMENT, {filter: this.createFilters(parent_id)});
   }
 
   addChildren(parentId: string, children: IEntityComment[]) {
@@ -104,39 +64,35 @@ export class CommentService implements ICommentService {
       return;
     }
     const ids = children.map((child) => child.id);
-    this.store.dispatch(new CommentTreeAction.AddChildren(parentId, ids));
+    this.store.dispatch(new CommentTreeAction.ChildrenAdd(parentId, ids));
   }
 
   setEntity(entity: IEntityBase) {
-    this.data.createWithValues(entity.type, entity)
+    this.entities.createJsonApiEntity(entity.type, entity)
       .toPromise().then((entity) => {
-      this.store.dispatch(new CommentsAction.AddEntity(entity));
+      // this.store.dispatch(new DataAction.AddMany(entity.type,[entity]));
     });
   }
 
-  saveUpdate(commentId: string, content: string): Observable<IEntityComment> {
+  saveUpdate(comment: IEntityComment): Observable<IEntityComment> {
+    return this.entities.saveUpdate<IEntityComment>(comment.type, comment.id, comment.getJsonApiDoc());
+  }
+
+  getChildrenIds(id: string) {
     return this.store.pipe(
-      take(1),
-      select(CommentsSelect.Comment, {id: commentId}),
-      switchMap((comment: IEntityComment) => {
-        if (comment.body.value !== content) {
-          comment.body.value = content;
-          return this.data.update(comment);
-        } else {
-          return of(comment);
-        }
-      })
+      select(CommentTreeSelect.ChildrenIds, {id}),
+      map((ids) => ids || [])
     );
   }
 
-  getChildren(parentId: string): Observable<string[]> {
-    return this.store.pipe(
-      select(CommentTreeSelect.Nodes),
-      map((nodes) => nodes[parentId] ? [...nodes[parentId].children] : null),
-      // tap((children) => console.log('[getChildren]', {parentId, children})),
-    );
+
+  nodeExpand(node: ICommentNode) {
+    this.store.dispatch(new CommentTreeAction.ChildrenExpand(node));
   }
 
+  nodeCollapse(node: ICommentNode) {
+    this.store.dispatch(new CommentTreeAction.ChildrenCollapse(node));
+  }
 
   public delete(comment: IEntityComment) {
     // this.store.delete(comment.id);
@@ -148,25 +104,41 @@ export class CommentService implements ICommentService {
 //    this.listChange.emit(parent.comment.id);
   }
 
-  isExistsParentComment(comment: IEntityComment): Observable<IEntityComment> {
-    const load$ = comment.pid ? this.loadComment(comment.pid.id) : of(null);
-    return load$.pipe(take(1), filter(Boolean));
+  loadComment(id: string) {
+    return this.entities.loadOne(ETypes.COMMENT, {id});
   }
 
-  loadComment(id: string): Observable<IEntityComment> {
-    return this.data.one(ETypes.COMMENT, {id});
+  newComment(body: IFormattedBody, parent_id?: string) {
+    return this.state.onCommonComplete().pipe(
+      map((data) => {
+        const {entity, field_name, uid} = data;
+        const values: Partial<IEntityComment> = {
+          entity_id: entity,
+          field_name,
+          body
+        };
+        return this.entities.createFromValues<IEntityComment>(EntityComment, values);
+      })
+    );
   }
 
-  saveNew(body: IFormattedBody, pid?: IEntityComment): Observable<IEntityComment> {
-    return this.state.commonComplete()
-      .pipe(
-        map(createCommentData(body, pid)),
-        switchMap((data: Partial<IEntityComment>) => this.data.createWithValues<IEntityComment>(ETypes.COMMENT, data)),
-        switchMap((comment: IEntityComment) => this.data.add<IEntityComment>(comment)),
-        tap((comment: IEntityComment) => this.store.dispatch(new CommentsAction.CommentAdd(comment))),
-        tap((comment: IEntityComment) => this.state.setEditable(comment.id, true)),
-        take(1)
-      );
+  saveNew(comment: IEntityComment, parent_id?: string): Observable<IEntityComment> {
+    return this.state.onCommonComplete().pipe(
+      map((data) => {
+        const {entity, field_name, uid} = data;
+
+        comment.entity_id = entity;
+        comment.entity_type = getEntityType(entity.type);
+        comment.field_name = field_name;
+        comment.uid = uid;
+        if (parent_id) {
+          comment.pid = {type: ETypes.COMMENT, id: parent_id};
+        }
+        return comment;
+      }),
+      switchMap((comment: IEntityComment) => this.entities.saveNew(comment.type, comment.getJsonApiDoc())),
+      createEntityOfJsonapiOne(EntityComment)
+    );
   }
 
 
